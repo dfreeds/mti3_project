@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-gu/strings.xml -->
+    <eat-comment/>
+    <string name="btn_cancel">રદ્ કરો</string>
+    <string name="button_close">બંધ કરો</string>
+    <string name="button_help">મદદ</string>
+    <string name="default_bridges"/>
+    <string name="menu_info">મદદ</string>
+    <string name="wizard_proxy_help_info">પ્રોક્સી ગોઠવણીઓ</string>
+</resources>

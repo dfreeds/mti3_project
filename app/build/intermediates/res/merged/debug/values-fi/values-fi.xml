@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/res/values-fi/values.xml -->
+    <eat-comment/>
+    <string msgid="4600421777120114993" name="abc_action_bar_home_description">"Siirry etusivulle"</string>
+    <string msgid="1397052879051804371" name="abc_action_bar_home_description_format">"%1$s, %2$s"</string>
+    <string msgid="6623331958280229229" name="abc_action_bar_home_subtitle_description_format">"%1$s, %2$s, %3$s"</string>
+    <string msgid="1594238315039666878" name="abc_action_bar_up_description">"Siirry ylös"</string>
+    <string msgid="3588849162933574182" name="abc_action_menu_overflow_description">"Lisää"</string>
+    <string msgid="4076576682505996667" name="abc_action_mode_done">"Valmis"</string>
+    <string msgid="7468859129482906941" name="abc_activity_chooser_view_see_all">"Näytä kaikki"</string>
+    <string msgid="2031811694353399454" name="abc_activitychooserview_choose_application">"Valitse sovellus"</string>
+    <string msgid="3691816814315814921" name="abc_searchview_description_clear">"Tyhjennä kysely"</string>
+    <string msgid="2550479030709304392" name="abc_searchview_description_query">"Hakulauseke"</string>
+    <string msgid="8264924765203268293" name="abc_searchview_description_search">"Haku"</string>
+    <string msgid="8928215447528550784" name="abc_searchview_description_submit">"Lähetä kysely"</string>
+    <string msgid="893419373245838918" name="abc_searchview_description_voice">"Puhehaku"</string>
+    <string msgid="3421042268587513524" name="abc_shareactionprovider_share_with">"Jakaminen:"</string>
+    <string msgid="7165123711973476752" name="abc_shareactionprovider_share_with_application">"Jakaminen: %s"</string>
+    <string msgid="1603543279005712093" name="abc_toolbar_collapse_description">"Kutista"</string>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-fi/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">Orbot</string>
+    <string name="bandwidth_">Kaistanleveys:</string>
+    <string name="bridge_error">Siltavirhe</string>
+    <string name="bridge_requires_ip">Jos haluat käyttää siltaominaisuutta, kirjoita vähintään yhden sillan IP-osoite.</string>
+    <string name="bridges">Sillat</string>
+    <string name="bridges_obfuscated">Hämärät sillat</string>
+    <string name="btn_back">Takaisin</string>
+    <string name="btn_cancel">Peruuta</string>
+    <string name="btn_finish">Lopeta</string>
+    <string name="btn_next">Seuraava</string>
+    <string name="btn_okay">Selvä</string>
+    <string name="btn_save_settings">Tallenna asetukset</string>
+    <string name="button_about">Tietoa</string>
+    <string name="button_clear_log">Tyhjennä loki</string>
+    <string name="button_close">Sulje</string>
+    <string name="button_grant_superuser">Pyydä Superuser-oikeuksia</string>
+    <string name="button_help">Apua</string>
+    <string name="control_permission_label">käynnistä ja lopeta Tor</string>
+    <string name="couldn_t_start_tor_process_">Tor-prosessin käynnistäminen epäonnistui:</string>
+    <string name="default_bridges"/>
+    <string name="default_web_url">http://check.torproject.org</string>
+    <string name="down">alas</string>
+    <string name="enable_alternate_entrance_nodes_into_the_tor_network">Salli vaihtoehtoiset sisääntulosolmut Tor-verkkoon</string>
+    <string name="enable_debug_log_to_output_must_use_adb_or_alogcat_to_view_">salli virheenjäljityslokin tulo tulostevirtaan (käytä adb:tä tai aLogCat:ia tarkastellaksesi)</string>
+    <string name="enable_hidden_services">Piilopalvelun isännöinti</string>
+    <string name="enable_if_configured_bridges_are_obfuscated_bridges">Salli hämärien siltojen konfigurointi</string>
+    <string name="enable_your_device_to_be_a_non_exit_relay">Salli laitteen käyttö välireleenä</string>
+    <string name="enter_a_custom_relay_nickname">Kirjoita mukautettu relenimi</string>
+    <string name="enter_bridge_addresses">Kirjoita siltaosoitteet</string>
+    <string name="enter_exclude_nodes">Kirjoita vältettävät solmut</string>
+    <string name="enter_exit_nodes">Kirjoita päätesolmut</string>
+    <string name="enter_localhost_ports_for_hidden_services">kirjoita sisäiset portit piilopalveluille</string>
+    <string name="enter_or_port">Kirjoita OR-portti</string>
+    <string name="enter_ports">Kirjoita portit</string>
+    <string name="error">Virhe</string>
+    <string name="error_installing_binares">Tor-binääritiedostojen asentaminen tai päivitys epäonnistui.</string>
+    <string name="exclude_nodes">Vältä solmuja</string>
+    <string name="exit_nodes">Päätesolmut</string>
+    <string name="fingerprints_nicks_countries_and_addresses_for_the_last_hop">Sormenjäljet, lovet, maat ja osoitteet viimeiselle hypylle</string>
+    <string name="fingerprints_nicks_countries_and_addresses_to_exclude">Vältettävät sormenjäljet, lovet, maat ja osoitteet</string>
+    <string name="found_existing_tor_process">löytyi olemassaoleva Tor-prosessi…</string>
+    <string name="hidden_service_on">piilopalvelun sijainti:</string>
+    <string name="hidden_service_ports">Piilopalveluiden portit</string>
+    <string name="hidden_service_request">Sovellus haluaa avata piilopalveluportin %S Tor-verkkoon. Tämä on turvallista, jos luotat sovellukseen.</string>
+    <string name="https_torproject_org">https://torproject.org</string>
+    <string name="install_apps_">Asennetaanko sovelluksia?</string>
+    <string name="internal_web_url">http://orbot/</string>
+    <string name="ip_address_and_port_of_bridges">Siltojen IP-osoitteet ja portit</string>
+    <string name="it_doesn_t_seem_like_you_have_orweb_installed_want_help_with_that_or_should_we_just_open_the_browser_">Näyttää siltä, että Orweb ei ole asennettuna. Haluatko apua siinä, vai pitäisikö meidän vain avata selain?</string>
+    <string name="listening_port_for_your_tor_relay">Tor-releesi kuunteluportti</string>
+    <string name="main_layout_download">Lataa</string>
+    <string name="main_layout_upload">Lähetä</string>
+    <string name="menu_about">Tietoa</string>
+    <string name="menu_apps">Sovellukset</string>
+    <string name="menu_browse">Selaa</string>
+    <string name="menu_exit">Lopeta</string>
+    <string name="menu_home">Alkuun</string>
+    <string name="menu_info">Ohje</string>
+    <string name="menu_log">Loki</string>
+    <string name="menu_settings">Asetukset</string>
+    <string name="menu_start">Aloita</string>
+    <string name="menu_stop">Lopeta</string>
+    <string name="menu_use_chatsecure">Käytä ChatSecurea</string>
+    <string name="menu_verify">Tarkista</string>
+    <string name="menu_verify_browser">Tarkista selain</string>
+    <string name="menu_wizard">Velho</string>
+    <string name="newnym">Vaihdoit Tor-identiteettisi uuteen!</string>
+    <string name="not_anonymous_yet">VAROITUS: Verkkoliikenteesi ei ole vielä anonyymiä! Konfiguroi ohjelmasi käyttämään HTTP-välityspalvelinta 127.0.0.1:8118 tai SOCKS4A- tai SOCKS5-välityspalvelinta 127.0.0.1:9050</string>
+    <string name="notification_using_bridges">Sillat käytössä!</string>
+    <string name="permission_manage_tor_description">Anna tämän sovelluksen ohjata Tor-palvelua</string>
+    <string name="permission_manage_tor_label">Hallinnoi Toria</string>
+    <string name="ports_reachable_behind_a_restrictive_firewall">Rajoitetun palomuurin takaa saavutettavat portit</string>
+    <string name="pref_disable_network_summary">Laita Tor nukkumaan, kun internet-yhteyttä ei ole saatavilla</string>
+    <string name="pref_disable_network_title">Ei verkon automaattilepotilaa</string>
+    <string name="pref_entrance_node">Tor-sisääntulosolmu</string>
+    <string name="pref_entrance_node_dialog">Kirjoita sisääntulosolmujen nimet</string>
+    <string name="pref_entrance_node_summary">Sormenjäljet, lovet, maat ja osoitteet ensimmäiseen hyppyyn</string>
+    <string name="pref_general_group">Yleiset</string>
+    <string name="pref_has_root">Pyydä root-tason oikeuksia</string>
+    <string name="pref_has_root_summary">Pyydä root-tason oikeuksia läpinäkyvään tiedonvälitykseen</string>
+    <string name="pref_hs_group">Piilopalvelun isännöinti</string>
+    <string name="pref_node_configuration">Tor-solmukohdan konfigurointi</string>
+    <string name="pref_node_configuration_summary">Nämä ovat lisäasetuksia, jotka voivat vähentää anonyymiyttäsi</string>
+    <string name="pref_proxy_host_dialog">Kirjoita välityspalvelimen isäntä</string>
+    <string name="pref_proxy_host_summary">Välityspalvelimen verkko-osoite</string>
+    <string name="pref_proxy_host_title">Ulosmenovälityspalvelimen isäntä</string>
+    <string name="pref_proxy_password_dialog">Kirjoita välityspalvelimen salasana</string>
+    <string name="pref_proxy_password_summary">Välityspalvelimen salasana (valinnainen)</string>
+    <string name="pref_proxy_password_title">Ulosmenovälityspalvelimen salasana</string>
+    <string name="pref_proxy_port_dialog">Kirjoita välityspalvelimen portti</string>
+    <string name="pref_proxy_port_summary">Välityspalvelimen portti</string>
+    <string name="pref_proxy_port_title">Ulosmenovälityspalvelimen portti</string>
+    <string name="pref_proxy_title">Lähtevän liikenteen välityspalvelin (valinnainen)</string>
+    <string name="pref_proxy_type_dialog">Kirjoita välityspalvelintyyppi</string>
+    <string name="pref_proxy_type_summary">Välityspalvelimen protokolla: HTTP, HTTPS, Socks4, Socks5</string>
+    <string name="pref_proxy_type_title">Lähtevän liikenteen välityspalvelimen tyyppi</string>
+    <string name="pref_proxy_username_dialog">Kirjoita välityspalvelimen käyttäjätunnus</string>
+    <string name="pref_proxy_username_summary">Välityspalvelimen käyttäjätunnus (valinnainen)</string>
+    <string name="pref_proxy_username_title">Ulosmenovälityspalvelimen käyttäjänimi</string>
+    <string name="pref_select_apps">Valitse sovellukset</string>
+    <string name="pref_select_apps_summary">Valitse Torin läpi reititettävät sovellukset</string>
+    <string name="pref_start_boot_summary">Käynnistä Orbot ja yhdistä Toriin automaattisesti, kun Anroid-laitteesi käynnistyy</string>
+    <string name="pref_start_boot_title">Aloita Orbot käynnistettäessä</string>
+    <string name="pref_trans_proxy_group">Läpinäkyvä välityspalvelimen käyttö (Vaatii roottauksen)</string>
+    <string name="pref_trans_proxy_summary">Ohjelmien automaattinen Torimointi</string>
+    <string name="pref_trans_proxy_title">Läpinäkyvä välityspalvelimen käyttö</string>
+    <string name="pref_transparent_all_summary">Välitä kaikki ohjelmien liikenne Torin läpi</string>
+    <string name="pref_transparent_all_title">Torraa kaikki</string>
+    <string name="pref_transparent_port_dialog">Kirjoita portit, jotka viedään välityspalvelimen kautta</string>
+    <string name="pref_transparent_port_fallback_summary">VAROITUS: Kiertää yleisiä portteja (80, 443, jne). *KÄYTÄ VAIN* jos \"Kaikki\" tai \"Sovellus\" -tila ei toimi.</string>
+    <string name="pref_transparent_port_fallback_title">Välityspalvelinportin varoasetus</string>
+    <string name="pref_transparent_port_summary">Välityspalvelimen kautta vietävien porttien lista. *KÄYTÄ VAIN* jos \"Kaikki\" tai \"Sovellus\" -tila ei toimi.</string>
+    <string name="pref_transparent_port_title">Porttilista</string>
+    <string name="pref_transparent_tethering_summary">Salli Torin läpinäkyvä tiedonvälitys Wifille ja USB-välityspalvelimena oleville laitteille (vaatii uudelleenkäynnistyksen)</string>
+    <string name="pref_transparent_tethering_title">Tor-välityspalvelimena oleminen</string>
+    <string name="pref_use_persistent_notifications">Pidä kuvake aina työkalupalkissa, kun Orbot on yhdistetty</string>
+    <string name="pref_use_persistent_notifications_title">Ilmoitukset aina käytössä</string>
+    <string name="pref_use_sys_iptables_summary">käytä sisäänrakennettua Ip-taulubinääriä Orbotin mukana tulleen sijasta</string>
+    <string name="pref_use_sys_iptables_title">Käytä Ip-oletustauluja</string>
+    <string name="press_to_start">- paina pitkään käynnistääksesi -</string>
+    <string name="project_home">Projektin kotisivu(t):</string>
+    <string name="reachable_addresses">Saavutettavissa olevat osoitteet</string>
+    <string name="reachable_ports">Saavutettavissa olevat portit</string>
+    <string name="relay_nickname">Releen kutsumanimi</string>
+    <string name="relay_port">Releportti</string>
+    <string name="relaying">Releytys</string>
+    <string name="relays">Releet</string>
+    <string name="run_as_a_client_behind_a_firewall_with_restrictive_policies">Aja asiakkaana rajoitetun palomuurin takaa</string>
+    <string name="run_servers_accessible_via_the_tor_network">salli laitteensisäisen palvelimen käyttö osana Tor-verkkoa</string>
+    <string name="secure_default_web_url">https://check.torproject.org</string>
+    <string name="send_email_for_bridges">Lähetä sähköpostia osoitteeseen bridges@torproject.org gmail-osoitteesta siten, että viestin ainoa rivi on \"get bridges\".</string>
+    <string name="set_locale_summary">Valitse maa-asetus ja kieli Orbit-sovellukselle</string>
+    <string name="setting_up_app_based_transparent_proxying_">Sovelluspohjaista läpinäkyvää tiedonvälitystä otetaan käyttöön…</string>
+    <string name="setting_up_full_transparent_proxying_">Täyttä läpinäkyvää tiedonvälitystä otetaan käyttöön…</string>
+    <string name="setting_up_port_based_transparent_proxying_">Porttipohjaista läpinäkyvää tiedonvälitystä otetaan käyttöön…</string>
+    <string name="something_bad_happened">Jotain pahaa tapahtui. Tarkista loki</string>
+    <string name="status">Tila</string>
+    <string name="status_activated">Yhdistetty Tor-verkkoon</string>
+    <string name="status_disabled">Orbot on deaktivoitu</string>
+    <string name="status_install_fail">Tor-binääritiedostojen asennus epäonnistui. Tarkista loki ja ilmoita asiasta osoitteeseen tor-assistants@torproject.org</string>
+    <string name="status_install_success">Tor-binääritiedostojen asennus onnistui!</string>
+    <string name="status_shutting_down">Orbot sulkeutuu</string>
+    <string name="status_starting_up">Orbot käynnistyy…</string>
+    <string name="strict_nodes">Tarkat solmukohdat</string>
+    <string name="the_addressable_name_for_your_hidden_service_generated_automatically_">piilopalvelusi nimiosoite (luodaan automaattisesti)</string>
+    <string name="the_nickname_for_your_tor_relay">Kutsumanimi Tor-releellesi</string>
+    <string name="the_tor_license">Tor-lisenssi</string>
+    <string name="third_party_software">3:n osapuolen ohjelmisto:</string>
+    <string name="title_error">Sovellusvirhe</string>
+    <string name="tor_check">Tämä avaa selaimesi osoitteeseen https://check.torproject.org nähdäkseen, onko Orbot varmaan konfiguroitu ja onko sinut yhdistetty Tor-sovellukseen.</string>
+    <string name="tor_check_api_url">https://check.torproject.org/?TorButton=true</string>
+    <string name="tor_process_complete">valmis.</string>
+    <string name="tor_process_starting">Käynnistetään Tor ohjelmaa…</string>
+    <string name="tor_process_waiting">odottaa.</string>
+    <string name="tor_proxy_service_process">torproxyservice</string>
+    <string name="transparent_proxying_enabled">Läpinäkyvä tiedonvälitys SALLITTU</string>
+    <string name="transproxy_enabled_for_tethering_">TransProxy on otettu käyttöön Tor-välityspalvelimimena olemista varten!</string>
+    <string name="transproxy_rules_cleared">TransProxyn säännöt tyhjennetty</string>
+    <string name="twitter_setup_url">https://guardianproject.info/2012/05/02/orbot-your-twitter/</string>
+    <string name="unable_to_read_hidden_service_name">piilopalvelunimen lukeminen epäonnistui</string>
+    <string name="unable_to_start_tor">Torin käynnistys epäonnistui:</string>
+    <string name="up">ylös</string>
+    <string name="use_bridges">Käytä siltoja</string>
+    <string name="use_only_these_specified_nodes">Käytä *vain* näitä solmuja</string>
+    <string name="warning_error_starting_transparent_proxying_">VAROITUS: virhe aloittaessa läpinäkyvää tiedonvälitystä!</string>
+    <string name="wizard_btn_tell_me_more">Tietoja Orbotista</string>
+    <string name="wizard_configure">Konfiguroi Torimointi</string>
+    <string name="wizard_configure_all">Välitä kaikkien sovellusten tiedonsiirto Tor-verkon kautta</string>
+    <string name="wizard_configure_msg">Orbot mahdollistaa kaiken sovellusliikenteen reitittämisen Tor-sovelluksen kautta TAI valita sovelluksesi yksilöllisesti.</string>
+    <string name="wizard_configure_select_apps">Valitse Tor-verkkoa käyttävät sovellukset</string>
+    <string name="wizard_details">Joitakin Orbotin yksityiskohtia</string>
+    <string name="wizard_final">Orbot on valmis!</string>
+    <string name="wizard_locale_msg">Jätä oletusarvoon tai vaihda nykyiseen kieleen</string>
+    <string name="wizard_locale_title">Valitse kieli</string>
+    <string name="wizard_permission_enable_root">Anna root-tason oikeudet Orbotille</string>
+    <string name="wizard_permissions_consent">Ymmärrän ja haluan jatkaa ilman Superuser-tason oikeuksia</string>
+    <string name="wizard_permissions_msg_stock">Vaikka root-tason oikeuksien antaminen Orbotille ei ole pakollista, tulee Orbotista tehokkaampi työkalu jos laitteellasi on root-tason oikeudet. Käytä alla olevaa painiketta antaaksesi Orbotille supervoimat!</string>
+    <string name="wizard_permissions_no_root">Jos sinulla ei ole root-tason oikeuksia tai et tiedä, mitä tarkoitamme, käytä vain Orbotille suunniteltuja ohjelmia.</string>
+    <string name="wizard_permissions_root">Lupa myönnetty</string>
+    <string name="wizard_permissions_root_msg1">Voit antaa Orbotille Superuser-oikeudet mahdollistaaksesi joitakin lisäominaisuuksia, kuten läpinäkyvän tiedonvälityksen.</string>
+    <string name="wizard_permissions_root_msg2">Jos et halua tehdä tätä, varmista, että käytät Orbotin kanssa toimivaksi suunniteltuja sovelluksia.</string>
+    <string name="wizard_permissions_stock">Orbot-oikeudet</string>
+    <string name="wizard_permissions_title">Käyttöoikeudet</string>
+    <string name="wizard_premissions_msg_root">Loistavaa! Olemme havainneet että olet antanut root-tason oikeudet Orbotille. Käytämme näiden oikeuksien suomia mahdollisuuksia harkiten.</string>
+    <string name="wizard_proxy_help_info">Välityspalvelinasetukset</string>
+    <string name="wizard_tips_duckgo">DuckDuckGo-hakukonesovellus</string>
+    <string name="wizard_tips_gibberbot">ChatSecure: Turvallinen chattailusovellus Off-the-Record -salauksella</string>
+    <string name="wizard_tips_msg">Alempana näkyvät sovellukset on suunniteltu toimimaan Orbotin kanssa. Paina jokaista nappia, jos haluat asentaa ne nyt. Voit myös löytää ne myöhemmin Googlen Play-kaupasta, GuardianProject.info:n nettisivulta tai F-Droid.org:in kautta.</string>
+    <string name="wizard_tips_orweb">Orweb: Tietosuojaa parantava selain, joka toimii Torin läpi</string>
+    <string name="wizard_tips_otrchat">ChatSecure - Turvallinen pikaviestisovellus Androidille</string>
+    <string name="wizard_tips_play">Löydä kaikki Guardian-projektin sovellukset Googlen Play-kaupasta</string>
+    <string name="wizard_tips_proxy">Välityspalvelinasetukset - Opi konfiguroimaan sovellukset toimimaan Orbotin kanssa</string>
+    <string name="wizard_tips_title">Orbotia käyttävät sovellukset</string>
+    <string name="wizard_tips_tricks">Orbotia käyttävät sovellukset</string>
+    <string name="wizard_tips_twitter">Aseta Twitter-välityspalvelinisännäksi \"localhost\" ja portiksi 8118</string>
+    <string name="wizard_title">Orbot</string>
+    <string name="wizard_transproxy_hint">(Rastita tämä ruutu, jos et tiedä, mitä tarkoitamme)</string>
+    <string name="wizard_transproxy_msg">Tämä sallii sovellustesi tietoliikenteen menemisen automaattisesti Torin läpi</string>
+    <string name="wizard_transproxy_none">Ei mikään</string>
+    <string name="wizard_transproxy_title">Läpinäkyvä tiedonvälitys</string>
+    <string name="wizard_warning_title">Varoitus</string>
+    <string name="your_reachableaddresses_settings_caused_an_exception_">ReachableAccess-asetuksesi aiheuttivat virheen!</string>
+    <string name="your_relay_settings_caused_an_exception_">Releasetuksesi aiheuttivat virheen!</string>
+</resources>

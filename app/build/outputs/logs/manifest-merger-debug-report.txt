@@ -1,0 +1,247 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:2:1-131:12
+	package
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:3:5-37
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+	android:versionName
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:4:5-38
+	android:versionCode
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:5:5-35
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:2:11-69
+	android:installLocation
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:6:5-35
+uses-sdk
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:9:5-73
+MERGED from [com.android.support:support-v4:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:appcompat-v7:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/AndroidManifest.xml:20:5-43
+	android:targetSdkVersion
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:9:42-71
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:9:15-41
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml
+permission#org.torproject.android.MANAGE_TOR
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:10:5-13:46
+	android:label
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:11:9-60
+	android:protectionLevel
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:13:9-44
+	android:description
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:12:9-72
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:10:17-65
+uses-permission#org.torproject.android.MANAGE_TOR
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:15:5-72
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:15:22-70
+uses-permission#android.permission.INTERNET
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:16:5-66
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:16:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:17:5-78
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:17:22-76
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:18:5-81
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:18:22-78
+application
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:20:5-130:19
+MERGED from [com.android.support:support-v4:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:appcompat-v7:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:22.0.0] /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/AndroidManifest.xml:22:5-20
+	android:label
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:21:9-41
+	android:allowClearUserData
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:26:9-42
+	android:configChanges
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:23:9-62
+	android:allowBackup
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:25:9-36
+	android:icon
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:20:65-101
+	android:largeHeap
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:29:9-34
+	android:persistent
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:27:9-34
+	android:description
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:22:9-54
+	android:stopWithTask
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:28:9-37
+	android:theme
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:24:9-52
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:20:18-64
+activity#org.torproject.android.OrbotMainActivity
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:32:9-58:20
+	android:excludeFromRecents
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:34:13-46
+	android:launchMode
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:35:13-43
+	android:configChanges
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:33:13-59
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:32:19-52
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:37:13-40:29
+action#android.intent.action.MAIN
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:38:17-69
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:38:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:39:17-77
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:39:27-74
+intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:42:13-47:29
+action#android.intent.action.VIEW
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:43:17-69
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:43:25-66
+category#android.intent.category.DEFAULT
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:44:17-76
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:44:27-73
+category#android.intent.category.BROWSABLE
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:45:17-78
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:45:27-75
+data
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:46:17-49
+	android:scheme
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:46:23-46
+intent-filter#android.intent.category.DEFAULT+org.torproject.android.REQUEST_HS_PORT
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:49:13-52:29
+action#org.torproject.android.REQUEST_HS_PORT
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:51:17-81
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:51:25-78
+intent-filter#android.intent.category.DEFAULT+org.torproject.android.START_TOR
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:53:13-56:29
+action#org.torproject.android.START_TOR
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:55:17-75
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:55:25-72
+activity#org.torproject.android.service.DummyActivity
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:63:9-75:15
+	android:clearTaskOnLaunch
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:72:13-45
+	android:enabled
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:66:13-35
+	android:stateNotNeeded
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:71:13-42
+	android:excludeFromRecents
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:69:13-46
+	android:noHistory
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:68:13-37
+	android:allowTaskReparenting
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:67:13-48
+	android:alwaysRetainTaskState
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:70:13-50
+	android:finishOnTaskLaunch
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:73:13-46
+	android:theme
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:65:13-59
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:64:13-50
+activity#org.torproject.android.vpn.VPNEnableActivity
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:77:9-80:15
+	android:label
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:78:51-83
+	android:exported
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:78:84-108
+	android:theme
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:79:13-59
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:78:13-50
+activity#org.torproject.android.ui.PromoAppsActivity
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:83:9-104
+	android:exported
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:83:78-102
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:83:19-77
+activity#org.torproject.android.settings.SettingsPreferences
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:86:9-99
+	android:label
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:86:65-97
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:86:19-63
+activity#org.torproject.android.settings.AppManager
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:87:9-90
+	android:label
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:87:56-88
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:87:19-54
+service#org.torproject.android.service.TorService
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:89:9-94:19
+	android:enabled
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:91:13-35
+	android:permission
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:92:13-67
+	android:stopWithTask
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:93:13-41
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:90:13-47
+receiver#org.torproject.android.service.StartTorReceiver
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:96:9-102:20
+	android:exported
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:98:13-36
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:97:13-53
+intent-filter#org.torproject.android.intent.action.START
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:99:13-101:29
+action#org.torproject.android.intent.action.START
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:100:17-85
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:100:25-82
+receiver#org.torproject.android.service.OnBootReceiver
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:104:9-120:20
+	android:enabled
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:105:13-35
+	android:exported
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:105:36-59
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:104:19-79
+intent-filter#android.intent.action.BOOT_COMPLETED+android.intent.category.HOME
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:108:13-111:29
+action#android.intent.action.BOOT_COMPLETED
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:109:17-79
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:109:25-76
+category#android.intent.category.HOME
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:110:17-73
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:110:27-70
+intent-filter#android.intent.action.QUICKBOOT_POWERON+android.intent.category.HOME
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:112:13-115:29
+action#android.intent.action.QUICKBOOT_POWERON
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:113:17-82
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:113:25-79
+intent-filter#android.intent.action.MEDIA_MOUNTED+android.intent.category.HOME
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:116:13-119:29
+action#android.intent.action.MEDIA_MOUNTED
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:117:17-77
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:117:25-75
+service#org.torproject.android.vpn.OrbotVpnService
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:123:9-128:19
+	android:permission
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:124:13-69
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:123:18-75
+intent-filter#android.net.VpnService
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:125:13-127:29
+action#android.net.VpnService
+ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:126:17-64
+	android:name
+		ADDED from /Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/AndroidManifest.xml:126:25-62

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-sn/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">Orbot</string>
+    <string name="button_about">Maererano</string>
+    <string name="default_bridges"/>
+    <string name="default_web_url">http://check.torproject.org</string>
+    <string name="menu_about">Maererano</string>
+    <string name="menu_exit">Buda</string>
+    <string name="menu_settings">Zvamada</string>
+    <string name="secure_default_web_url">https://check.torproject.org</string>
+    <string name="tor_check_api_url">https://check.torproject.org/?TorButton=true</string>
+    <string name="wizard_btn_tell_me_more">Maererano Orbot</string>
+    <string name="wizard_proxy_help_info">Proxy Zvamada</string>
+</resources>

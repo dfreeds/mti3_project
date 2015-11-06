@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-ur/strings.xml -->
+    <eat-comment/>
+    <string name="btn_back">پیچھے</string>
+    <string name="btn_cancel">تنسیخ کیجیے</string>
+    <string name="button_close">بند کیجیے</string>
+    <string name="button_help">مدد</string>
+    <string name="default_bridges"/>
+    <string name="menu_browse">براؤز کیجیے</string>
+    <string name="menu_info">مدد</string>
+</resources>

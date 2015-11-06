@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/res/values-sk/values.xml -->
+    <eat-comment/>
+    <string msgid="4600421777120114993" name="abc_action_bar_home_description">"Prejsť na plochu"</string>
+    <string msgid="1397052879051804371" name="abc_action_bar_home_description_format">"%1$s, %2$s"</string>
+    <string msgid="6623331958280229229" name="abc_action_bar_home_subtitle_description_format">"%1$s, %2$s, %3$s"</string>
+    <string msgid="1594238315039666878" name="abc_action_bar_up_description">"Prejsť hore"</string>
+    <string msgid="3588849162933574182" name="abc_action_menu_overflow_description">"Ďalšie možnosti"</string>
+    <string msgid="4076576682505996667" name="abc_action_mode_done">"Hotovo"</string>
+    <string msgid="7468859129482906941" name="abc_activity_chooser_view_see_all">"Zobraziť všetko"</string>
+    <string msgid="2031811694353399454" name="abc_activitychooserview_choose_application">"Zvoľte aplikáciu"</string>
+    <string msgid="3691816814315814921" name="abc_searchview_description_clear">"Vymazať dopyt"</string>
+    <string msgid="2550479030709304392" name="abc_searchview_description_query">"Vyhľadávací dopyt"</string>
+    <string msgid="8264924765203268293" name="abc_searchview_description_search">"Hľadať"</string>
+    <string msgid="8928215447528550784" name="abc_searchview_description_submit">"Odoslať dopyt"</string>
+    <string msgid="893419373245838918" name="abc_searchview_description_voice">"Hlasové vyhľadávanie"</string>
+    <string msgid="3421042268587513524" name="abc_shareactionprovider_share_with">"Zdieľať pomocou"</string>
+    <string msgid="7165123711973476752" name="abc_shareactionprovider_share_with_application">"Zdieľať pomocou %s"</string>
+    <string msgid="1603543279005712093" name="abc_toolbar_collapse_description">"Zbaliť"</string>
+    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-sk/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">Orbot</string>
+    <string name="btn_back">Späť</string>
+    <string name="btn_cancel">Zrušiť</string>
+    <string name="btn_save_settings">Uložiť nastavenie</string>
+    <string name="button_about">O aplikácií</string>
+    <string name="button_close">Zatvoriť</string>
+    <string name="button_help">Pomocník</string>
+    <string name="control_permission_label">štart a stop Tor</string>
+    <string name="default_bridges"/>
+    <string name="default_web_url">http://check.torproject.org</string>
+    <string name="error">Chyba</string>
+    <string name="internal_web_url">http://orbot/</string>
+    <string name="menu_about">O aplikácií</string>
+    <string name="menu_apps">Apps</string>
+    <string name="menu_browse">Prehliadať</string>
+    <string name="menu_exit">Ukončiť</string>
+    <string name="menu_home">Domov</string>
+    <string name="menu_info">Pomocník</string>
+    <string name="menu_settings">Nastavenia</string>
+    <string name="menu_verify">Skontrolovať</string>
+    <string name="not_anonymous_yet">VAROVANIE: Váš prenos nie je ešte anonymný! Prosím, nakonfigurujte aplikácie aby používali HTTP proxy 127.0.0.1:8118 alebo SOCKS4A alebo SOCKS5 proxy server 127.0.0.1:9050</string>
+    <string name="pref_general_group">Všeobecné</string>
+    <string name="secure_default_web_url">https://check.torproject.org</string>
+    <string name="status">Stav</string>
+    <string name="status_activated">Pripojený do Tor siete</string>
+    <string name="status_disabled">Orbot je deaktivovaný</string>
+    <string name="status_shutting_down">Orbot sa vypína</string>
+    <string name="status_starting_up">Orbot štartuje…</string>
+    <string name="tor_check_api_url">https://check.torproject.org/?TorButton=true</string>
+    <string name="tor_process_complete">hotovo.</string>
+    <string name="tor_process_starting">Štartujem Tor klienta…</string>
+    <string name="tor_process_waiting">čakám.</string>
+    <string name="tor_proxy_service_process">torproxyservice</string>
+    <string name="wizard_proxy_help_info">Nastavenie proxy</string>
+    <string name="wizard_transproxy_none">Žiadny</string>
+    <string name="wizard_warning_title">Varovanie</string>
+</resources>
