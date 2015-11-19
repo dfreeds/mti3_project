@@ -2,28 +2,31 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "org.torproject.android.vpn"
+        applicationId "com.example.hackeris.toyvpn"
         minSdkVersion 16
         targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
     }
-
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
+repositories {
+    maven {
+        url "https://clojars.org/repo/"
+    }
+}
+
 dependencies {
-    compile files('libs/slf4j-android-1.7.7.jar')
-    compile files('libs/slf4j-api-1.7.7.jar')
-
-    compile ('com.android.support:support-v4:19.0.+')
-    compile ('com.android.support:appcompat-v7:22.0.+')
-    compile ('net.freehaven.tor.control:jtorctl:0.2')
-
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'jpcap:jpcap:0.1.18-002'
 }

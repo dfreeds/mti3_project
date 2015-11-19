@@ -1,0 +1,23 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="3mm"
+        android:gravity="center_vertical|center_horizontal">
+
+        <Button
+            android:id="@+id/btn_connect"
+            style="@style/item"
+            android:text="@string/connect" />
+
+        <Button
+            android:id="@+id/btn_disconnect"
+            style="@style/item"
+            android:text="@string/disconnect" />
+
+    </LinearLayout>
+</ScrollView>

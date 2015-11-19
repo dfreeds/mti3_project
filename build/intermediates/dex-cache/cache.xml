@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/dfritz/.gradle/caches/modules-2/files-2.1/jpcap/jpcap/0.1.18-002/a9226417ca92ab4042629d09c0947ccad0592403/jpcap-0.1.18-002.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="a9226417ca92ab4042629d09c0947ccad0592403">
+        <dex dex="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/pre-dexed/debug/jpcap-0.1.18-002-053b836ebd66d52816efccc1add4f377443e4c72.jar" />
+    </item>
+    <item
+        jar="/Users/dfritz/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/22.1.1/support-annotations-22.1.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="01d051a6bfb1218b1db2d3a5af0480ac2c25c42a">
+        <dex dex="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/pre-dexed/debug/support-annotations-22.1.1-22c57d639b541617cb94df5c98d5b1b645b425d9.jar" />
+    </item>
+    <item
+        jar="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="a3ff3c506644c820eb2bdf06e8339f72be578551">
+        <dex dex="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/pre-dexed/debug/classes-88f7ae1cc066eb1b97152c2d2e54e997c4913c4a.jar" />
+    </item>
+    <item
+        jar="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c95ba8152923e4872e86a82cfcba9a51c0214328">
+        <dex dex="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/pre-dexed/debug/classes-3dce08db464be57abe151c3239f77312bdb6aa7d.jar" />
+    </item>
+    <item
+        jar="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/jars/libs/internal_impl-22.1.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="9e070ad32b2700b0343e8e0cccc437733d91ba3a">
+        <dex dex="/Users/dfritz/Documents/fh_master/3/project/ToyVPN-master/app/build/intermediates/pre-dexed/debug/internal_impl-22.1.1-14f75479bc2481cb2c7ce9acc79a1f852ecf73f9.jar" />
+    </item>
+
+</items>

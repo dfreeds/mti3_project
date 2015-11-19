@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- From: file:/Users/dfritz/Documents/fh_master/3/project/OrbotVPN-master/app/src/main/res/values-sk-rSK/strings.xml -->
-    <eat-comment/>
-    <string name="button_help">Pomocník</string>
-    <string name="default_bridges"/>
-    <string name="menu_info">Pomocník</string>
-    <string name="wizard_proxy_help_info">Nastavenia proxy</string>
-</resources>
