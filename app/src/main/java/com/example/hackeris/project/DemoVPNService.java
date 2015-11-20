@@ -17,6 +17,9 @@ import net.sourceforge.jpcap.net.UDPPacket;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -109,7 +112,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     private void configure() throws IOException {
 
         VpnService.Builder builder = new VpnService.Builder();
-        builder.addAddress("10.0.3.15", 32).addRoute("0.0.0.0", 0).setSession("DemoVPN").addDnsServer("8.8.8.8")
+        //TODO get local address?
+        builder.addAddress("10.0.0.42", 32).addRoute("0.0.0.0", 0).setSession("DemoVPN").addDnsServer("8.8.8.8")
                 .setMtu(1500);
 
         mInterface = builder.establish();
@@ -195,9 +199,39 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     UDPPacket upacket = new UDPPacket(0, packet.array ());
                     Log.e(TAG, upacket.toColoredString(false));
 
+                    DatagramSocket s = new DatagramSocket();
+                    Log.d(TAG, "sending UDP Packet! data_length: " + upacket.getLength() + " addr: " + InetAddress.getByName(upacket.getDestinationAddress()) + " port: " + upacket.getDestinationPort());
+                    DatagramPacket p = new DatagramPacket(upacket.getData(), upacket.getLength(), InetAddress.getByName(upacket.getDestinationAddress()), upacket.getDestinationPort());
+
+                    /*Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+
+                    while (en.hasMoreElements())
+                    {
+                        NetworkInterface nint = en.nextElement();
+                        if ("eth1".equals (nint.getDisplayName()))
+                        {
+                            s.bind (new InetSocketAddress(nint.getInetAddresses().nextElement(), 0));
+                        }
+                    }*/
+
+                    s.send(p);
+
+                    byte[] answer = new byte[1500];
+
+                    p = new DatagramPacket(answer, answer.length);
+                    s.receive(p);
+                    Log.e(TAG, "got answer!!! " + new String(answer, 0, p.getLength()));
+
+                    s.close();
                 }
 
                 packet.clear();
+            }
+
+            try {
+                Thread.sleep(100, 0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -215,6 +249,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
             dataTransferLoop();
 
         } catch (IOException ie) {
+            ie.printStackTrace();
             Log.e(TAG, ie.toString());
         } finally {
             try {
