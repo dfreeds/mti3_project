@@ -10,9 +10,11 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.Toast;
 
+import net.sourceforge.jpcap.net.EthernetPacket;
 import net.sourceforge.jpcap.net.IPPacket;
 import net.sourceforge.jpcap.net.TCPPacket;
 import net.sourceforge.jpcap.net.UDPPacket;
+import net.sourceforge.jpcap.util.HexHelper;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -184,45 +186,68 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 /*EthernetPacket epacket = new EthernetPacket (1, packet.array());
                 Log.e(TAG, "epacket: " + epacket.toString());*/
 
-                IPPacket ipacket = new IPPacket(0, packet.array ());
-                Log.e(TAG, ipacket.toColoredVerboseString(false));
+                Log.d(TAG, HexHelper.toString(packet.array ()));
 
-                if (ipacket.getProtocol() == 6)
+                IPPacket ipPacket = new IPPacket(0, packet.array ());
+                Log.i(TAG, ipPacket.toColoredVerboseString(false));
+
+                if (ipPacket.getProtocol() == 6)
                 {
                     //TCP
-                    TCPPacket tpacket = new TCPPacket(0, packet.array ());
-                    Log.e(TAG, tpacket.toColoredVerboseString(false));
+                    TCPPacket tcpPacket = new TCPPacket(0, packet.array ());
+                    Log.i(TAG, tcpPacket.toColoredVerboseString(false));
                 }
-                else if (ipacket.getProtocol() == 17)
+                else if (ipPacket.getProtocol() == 17)
                 {
                     //UDP
-                    UDPPacket upacket = new UDPPacket(0, packet.array ());
-                    Log.e(TAG, upacket.toColoredString(false));
+                    UDPPacket udpPacket = new UDPPacket(0, packet.array());
+                    Log.i(TAG, udpPacket.toColoredString(false));
 
-                    DatagramSocket s = new DatagramSocket();
-                    Log.d(TAG, "sending UDP Packet! data_length: " + upacket.getLength() + " addr: " + InetAddress.getByName(upacket.getDestinationAddress()) + " port: " + upacket.getDestinationPort());
-                    DatagramPacket p = new DatagramPacket(upacket.getData(), upacket.getLength(), InetAddress.getByName(upacket.getDestinationAddress()), upacket.getDestinationPort());
+                    DatagramSocket socket = new DatagramSocket();
+                    protect (socket);
+                    Log.d(TAG, "sending UDP Packet! data_length: " + udpPacket.getLength() + " addr: " + InetAddress.getByName(udpPacket.getDestinationAddress()) + " port: " + udpPacket.getDestinationPort());
+                    //DatagramPacket p = new DatagramPacket(upacket.getData(), upacket.getLength(), InetAddress.getByName(upacket.getDestinationAddress()), upacket.getDestinationPort());
+                    DatagramPacket datagramPacket = new DatagramPacket(udpPacket.getData(), udpPacket.getLength (), InetAddress.getByName(udpPacket.getDestinationAddress()), udpPacket.getDestinationPort());
 
-                    /*Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+                    socket.send(datagramPacket);
 
-                    while (en.hasMoreElements())
-                    {
-                        NetworkInterface nint = en.nextElement();
-                        if ("eth1".equals (nint.getDisplayName()))
-                        {
-                            s.bind (new InetSocketAddress(nint.getInetAddresses().nextElement(), 0));
-                        }
-                    }*/
+                    byte[] answer = new byte[PACK_SIZE];
+                    datagramPacket = new DatagramPacket(answer, answer.length);
+                    socket.receive(datagramPacket);
+                    Log.d(TAG, "length: " + datagramPacket.getLength());
+                    Log.d(TAG, "address: " + datagramPacket.getAddress());
+                    Log.d(TAG, "data: " + datagramPacket.getData());
+                    Log.d(TAG, "data length: " + datagramPacket.getData().length);
+                    Log.d(TAG, "datastring: " + new String(datagramPacket.getData(), 0, datagramPacket.getData().length));
+                    Log.d(TAG, "port: " + datagramPacket.getPort());
+                    Log.d(TAG, "socketaddress: " + datagramPacket.getSocketAddress().toString());
 
-                    s.send(p);
+                    //IPPacket answerPacket = new IPPacket(0, p.getData ());
+                    //Log.e(TAG, "got answer!!! " + answerPacket.toColoredVerboseString(false));
 
-                    byte[] answer = new byte[1500];
+                    //answerPacket = new IPPacket(42, p.getData ());
+                    //Log.e(TAG, "got answer 42 " + answerPacket.toColoredVerboseString(false));
 
-                    p = new DatagramPacket(answer, answer.length);
-                    s.receive(p);
-                    Log.e(TAG, "got answer!!! " + new String(answer, 0, p.getLength()));
+                    //answerPacket = new IPPacket(0, new String(p.getData (), 0, p.getData ().length).getBytes());
+                    //Log.e(TAG, "got answer newstringbytes " + answerPacket.toColoredVerboseString(false));
 
-                    s.close();
+                    /*byte[] one = new byte[42];
+                    packet.get(one, 0, 42);
+                    byte[] tmpPacket = new byte[udpPacket.getHeader().length + datagramPacket.getData ().length];
+                    System.arraycopy(one,0,tmpPacket,0,one.length);
+                    System.arraycopy(datagramPacket.getData(), 0, tmpPacket, one.length, datagramPacket.getData().length);
+                    IPPacket answerPacket = new IPPacket(0, tmpPacket);
+                    Log.i(TAG, "got answer manually packed" + answerPacket.toColoredVerboseString(true));*/
+
+                    EthernetPacket ethernetPacket = new EthernetPacket(0, datagramPacket.getData());
+                    Log.e(TAG, "ethernetPacket: " + ethernetPacket.toColoredString(false));
+
+                    Log.d(TAG, "data in hex: " + HexHelper.toString(datagramPacket.getData()));
+
+                    socket.close();
+
+                    //Log.d(TAG, "writing received packet back to vpn");
+                    //mOutputStream.write(datagramPacket.getData());
                 }
 
                 packet.clear();
