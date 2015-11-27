@@ -10,7 +10,6 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.sourceforge.jpcap.net.EthernetPacket;
 import net.sourceforge.jpcap.net.IPPacket;
 import net.sourceforge.jpcap.net.TCPPacket;
 import net.sourceforge.jpcap.net.UDPPacket;
@@ -24,6 +23,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+
+import edu.huji.cs.netutils.NetUtilsException;
+import edu.huji.cs.netutils.build.IPv4PacketBuilder;
+import edu.huji.cs.netutils.build.UDPPacketBuilder;
+import edu.huji.cs.netutils.parse.IPv4Address;
 
 /**
  * Created by hackeris on 15/9/6.
@@ -186,7 +190,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 /*EthernetPacket epacket = new EthernetPacket (1, packet.array());
                 Log.e(TAG, "epacket: " + epacket.toString());*/
 
-                Log.d(TAG, HexHelper.toString(packet.array ()));
+                Log.d(TAG, HexHelper.toString(packet.array()));
 
                 IPPacket ipPacket = new IPPacket(0, packet.array ());
                 Log.i(TAG, ipPacket.toColoredVerboseString(false));
@@ -218,36 +222,37 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     Log.d(TAG, "address: " + datagramPacket.getAddress());
                     Log.d(TAG, "data: " + datagramPacket.getData());
                     Log.d(TAG, "data length: " + datagramPacket.getData().length);
-                    Log.d(TAG, "datastring: " + new String(datagramPacket.getData(), 0, datagramPacket.getData().length));
                     Log.d(TAG, "port: " + datagramPacket.getPort());
                     Log.d(TAG, "socketaddress: " + datagramPacket.getSocketAddress().toString());
-
-                    //IPPacket answerPacket = new IPPacket(0, p.getData ());
-                    //Log.e(TAG, "got answer!!! " + answerPacket.toColoredVerboseString(false));
-
-                    //answerPacket = new IPPacket(42, p.getData ());
-                    //Log.e(TAG, "got answer 42 " + answerPacket.toColoredVerboseString(false));
-
-                    //answerPacket = new IPPacket(0, new String(p.getData (), 0, p.getData ().length).getBytes());
-                    //Log.e(TAG, "got answer newstringbytes " + answerPacket.toColoredVerboseString(false));
-
-                    /*byte[] one = new byte[42];
-                    packet.get(one, 0, 42);
-                    byte[] tmpPacket = new byte[udpPacket.getHeader().length + datagramPacket.getData ().length];
-                    System.arraycopy(one,0,tmpPacket,0,one.length);
-                    System.arraycopy(datagramPacket.getData(), 0, tmpPacket, one.length, datagramPacket.getData().length);
-                    IPPacket answerPacket = new IPPacket(0, tmpPacket);
-                    Log.i(TAG, "got answer manually packed" + answerPacket.toColoredVerboseString(true));*/
-
-                    EthernetPacket ethernetPacket = new EthernetPacket(0, datagramPacket.getData());
-                    Log.e(TAG, "ethernetPacket: " + ethernetPacket.toColoredString(false));
-
                     Log.d(TAG, "data in hex: " + HexHelper.toString(datagramPacket.getData()));
 
                     socket.close();
 
-                    //Log.d(TAG, "writing received packet back to vpn");
-                    //mOutputStream.write(datagramPacket.getData());
+                    UDPPacketBuilder udpPacketBuilder = new UDPPacketBuilder();
+                    udpPacketBuilder.setSrcPort(udpPacket.getDestinationPort());
+                    udpPacketBuilder.setDstPort(udpPacket.getSourcePort());
+                    udpPacketBuilder.setPayload(datagramPacket.getData());
+
+                    IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
+                    ipv4.setSrcAddr(new IPv4Address(ipPacket.getDestinationAddress()));
+                    ipv4.setDstAddr(new IPv4Address(ipPacket.getSourceAddress()));
+                    ipv4.addL4Buider(udpPacketBuilder);
+
+                    edu.huji.cs.netutils.parse.UDPPacket udpPacketToSend;
+
+                    try {
+                        udpPacketToSend = udpPacketBuilder.createUDPPacket();
+
+                        Log.e (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
+
+                        ipPacket = new IPPacket(0, udpPacketToSend.getRawBytes());
+                        Log.d (TAG, ipPacket.toColoredVerboseString(false));
+
+                        Log.d(TAG, "writing received packet back to vpn");
+                        mOutputStream.write(udpPacketToSend.getRawBytes());
+                    } catch (NetUtilsException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 packet.clear();
