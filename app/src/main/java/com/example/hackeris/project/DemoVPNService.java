@@ -28,6 +28,7 @@ import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
 import edu.huji.cs.netutils.build.UDPPacketBuilder;
 import edu.huji.cs.netutils.parse.IPv4Address;
+import edu.huji.cs.netutils.parse.UDPPacketIpv4;
 
 /**
  * Created by hackeris on 15/9/6.
@@ -238,18 +239,20 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     ipv4.setDstAddr(new IPv4Address(ipPacket.getSourceAddress()));
                     ipv4.addL4Buider(udpPacketBuilder);
 
-                    edu.huji.cs.netutils.parse.UDPPacket udpPacketToSend;
+                    UDPPacketIpv4 udpPacketToSend;
 
                     try {
-                        udpPacketToSend = udpPacketBuilder.createUDPPacket();
+                        udpPacketToSend = (UDPPacketIpv4) udpPacketBuilder.createUDPPacket();
 
                         Log.e (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
+                        /*Log.d(TAG, "dest port: " + udpPacketToSend.getDestinationPort());
+                        Log.d(TAG, "src port: " + udpPacketToSend.getSourcePort());*/
 
-                        ipPacket = new IPPacket(0, udpPacketToSend.getRawBytes());
+                        ipPacket = new IPPacket(14, udpPacketToSend.getRawBytes());
                         Log.d (TAG, ipPacket.toColoredVerboseString(false));
 
                         Log.d(TAG, "writing received packet back to vpn");
-                        mOutputStream.write(udpPacketToSend.getRawBytes());
+                        mOutputStream.write(ipPacket.getEthernetData());
                     } catch (NetUtilsException e) {
                         e.printStackTrace();
                     }
