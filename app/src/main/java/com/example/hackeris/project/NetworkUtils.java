@@ -3,11 +3,25 @@ package com.example.hackeris.project;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
-/**
- * Created by hackeris on 15/9/7.
- */
 public class NetworkUtils {
+
+    public static byte[] hexStringToBytes(String input) {
+        input = input.toLowerCase(Locale.US);
+        int n = input.length() / 2;
+        byte[] output = new byte[n];
+        int l = 0;
+        for (int k = 0; k < n; k++) {
+            char c = input.charAt(l++);
+            byte b = (byte) ((c >= 'a' ? (c - 'a' + 10) : (c - '0')) << 4);
+            c = input.charAt(l++);
+            b |= (byte) (c >= 'a' ? (c - 'a' + 10) : (c - '0'));
+            output[k] = b;
+        }
+        return output;
+    }
+
     public static String byteArrayToHexString(byte[] src, int length) {
 
         StringBuilder stringBuilder = new StringBuilder("");
