@@ -33,6 +33,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
@@ -132,6 +133,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         // Allocate the buffer for a single packet.
         ByteBuffer packet = ByteBuffer.allocate(PACK_SIZE);
+        HashMap<Integer, TCPConnection> tcpConnections = new HashMap<> ();
+        TCPConnection tcpConnection;
 
         while (true) {
 
@@ -151,20 +154,49 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     TCPPacket tcpPacket = new TCPPacket(0, packet.array());
                     Log.i(TAG, "->| " + tcpPacket.toColoredVerboseString(false));
 
-                    if (tcpPacket.isSyn())
-                    {
-                        //handshake towards VPN
-                        try {
-                            sendTCPPacketToVPN(buildSynAckPacket(tcpPacket));
-                        } catch (NetUtilsException e) {
-                            e.printStackTrace();
-                        }
+                    tcpConnection = tcpConnections.get(tcpPacket.getSourcePort());
 
-                        sendTCPData(tcpPacket, false);
+                    if (tcpConnection != null || tcpPacket.isSyn())
+                    {
+                        if (tcpPacket.isSyn())
+                        {
+                            if (tcpConnection == null) {
+                                tcpConnection = new TCPConnection(createSocketConnection(tcpPacket));
+                                tcpConnections.put(tcpPacket.getSourcePort(), tcpConnection);
+                            }
+
+                            //opening handshake towards VPN
+                            try {
+                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, true, tcpConnection.getNextSequenceNumber()));
+                            } catch (NetUtilsException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (tcpPacket.getData().length > 0) {
+                                sendTCPData(tcpConnection, tcpPacket, false);
+                            }
+                        }
+                        else if (tcpPacket.isFin())
+                        {
+                            //closing handshake towards VPN
+                            try {
+                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection.getNextSequenceNumber()));
+                            } catch (NetUtilsException e) {
+                                e.printStackTrace();
+                            }
+
+                            tcpConnection.getSocket().close();
+                            tcpConnections.remove(tcpPacket.getSourcePort());
+                        } else {
+                            if (tcpPacket.getData().length > 0) {
+                                sendTCPData(tcpConnection, tcpPacket, true);
+                            }
+                        }
                     }
                     else
                     {
-                        sendTCPData(tcpPacket, true);
+                        Log.d (TAG, "// none of us");
+                        //TODO it's none of us - reset?
                     }
                 }
                 else if (ipPacket.getProtocol() == 17)
@@ -196,54 +228,23 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         }
     }
 
-    private void sendTCPData(TCPPacket tcpPacket, boolean read) throws IOException
-    {
-        Socket socket = createSocketConnection (tcpPacket);
-
-        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        Log.d(TAG, "|-> TCP Packet (addr: " + tcpPacket.getDestinationAddress() + " port: " + tcpPacket.getDestinationPort() + " saddr: " + socket.getLocalAddress() + " sport: " + socket.getLocalPort() + ")");
-
-        outToServer.write(tcpPacket.getData());
-
-        if (read) {
-            char[] buffer = new char[PACK_SIZE * 2];
-            int val = -1;
-
-            while ((val = inFromServer.read(buffer, 0, PACK_SIZE * 2)) != -1) {
-                //TODO maybe have to split into more packets
-                try {
-                    sendTCPPacketToVPN(buildTCPPacket(tcpPacket, buffer));
-                } catch (NetUtilsException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            /*String line = null;
-            while ((line = inFromServer.readLine()) != null)
-            {
-                Log.d (TAG, "|<- tcp answer: " + line);
-            }*/
-        }
-
-        socket.close();
-    }
-
-    private TCPPacketIpv4 buildTCPPacket(TCPPacket tcpPacket, char[] buffer) throws NetUtilsException
+    private TCPPacketIpv4 buildHandshakePacket(TCPPacket tcpPacket, boolean isSyn, long sequenceNumber) throws NetUtilsException
     {
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
-        tcpPacketBuilder.setACKFlag(tcpPacket.isAck());
-        tcpPacketBuilder.setFINFlag(tcpPacket.isFin());
-        tcpPacketBuilder.setPSHFlag(tcpPacket.isPsh());
-        tcpPacketBuilder.setRSTFlag(tcpPacket.isRst());
-        tcpPacketBuilder.setSYNFlag(tcpPacket.isSyn());
-        tcpPacketBuilder.setURGFlag(tcpPacket.isUrg());
-        tcpPacketBuilder.setSeqNum((long) (Math.random() * 100000));
-        tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1); //TODO remember old value, store and use it
+        tcpPacketBuilder.setACKFlag(true);
+        if (isSyn)
+        {
+            tcpPacketBuilder.setSYNFlag(true);
+        }
+        else
+        {
+            tcpPacketBuilder.setFINFlag(true);
+        }
+        tcpPacketBuilder.setSeqNum(sequenceNumber);
+        tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1);
         tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
-        tcpPacketBuilder.setPayload(new String(buffer).getBytes());
+        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
@@ -257,15 +258,61 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         return (TCPPacketIpv4) tcpPacketBuilder.createTCPPacket();
     }
 
-    private TCPPacketIpv4 buildSynAckPacket(TCPPacket tcpPacket) throws NetUtilsException
+    private void sendTCPData(TCPConnection tcpConnection, TCPPacket tcpPacket, boolean read) throws IOException
+    {
+        if (tcpConnection.getSocket().isConnected()) {
+            DataOutputStream outToServer = new DataOutputStream(tcpConnection.getSocket().getOutputStream());
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(tcpConnection.getSocket().getInputStream()));
+
+            Log.d(TAG, "|-> TCP Packet (addr: " + tcpPacket.getDestinationAddress() + " port: " + tcpPacket.getDestinationPort() + " saddr: " + tcpConnection.getSocket().getLocalAddress() + " sport: " + tcpConnection.getSocket().getLocalPort() + ")");
+
+            Log.d(TAG, "tcppacket.data: " + NetworkUtils.byteArrayToHexString(tcpPacket.getData()));
+
+            outToServer.write(tcpPacket.getData());
+
+            if (read) {
+                char[] buffer = new char[PACK_SIZE * 20];
+
+                while ((inFromServer.read(buffer, 0, PACK_SIZE * 20)) != -1) {
+                    Log.d(TAG, "### ");
+                    Log.d(TAG, new String(buffer));
+                    Log.d(TAG, "###");
+
+                    //TODO maybe have to split into more packets
+                    try {
+                        sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, buffer));
+                    } catch (NetUtilsException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            /*String line = null;
+            while ((line = inFromServer.readLine()) != null)
+            {
+                Log.d (TAG, "|<- tcp answer: " + line);
+            }*/
+            }
+        }
+        else {
+            try {
+                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection.getNextSequenceNumber()));
+            } catch (NetUtilsException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, char[] buffer) throws NetUtilsException
     {
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
         tcpPacketBuilder.setACKFlag(true);
-        tcpPacketBuilder.setSYNFlag(true);
-        tcpPacketBuilder.setSeqNum((long) (Math.random() * 100000));
+        tcpPacketBuilder.setFINFlag(tcpPacket.isFin());
+        tcpPacketBuilder.setSeqNum(tcpConnection.getNextSequenceNumber());
         tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1);
         tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
+        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
+        tcpPacketBuilder.setPayload(trimTrailingZeros(new String(buffer).getBytes()));
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
@@ -288,7 +335,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         //Log.d(TAG, "<-| TCP.data: " + HexHelper.toString(new UDPPacket(14, tcpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
 
-        Log.d(TAG, "// writing received tcp packet back to vpn");
+        Log.d(TAG, "// writing tcp packet to vpn");
         mOutputStream.write(ipPacket.getEthernetData());
     }
 
@@ -377,11 +424,10 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         Log.d (TAG, "|<- --- incoming Datagram Packet ---");
         Log.d(TAG, "|<- length: " + datagramPacket.getLength());
         Log.d(TAG, "|<- address: " + datagramPacket.getAddress());
-        Log.d(TAG, "|<- data: " + datagramPacket.getData());
+        Log.d(TAG, "|<- data in hex: " + HexHelper.toString(datagramPacket.getData()));
         Log.d(TAG, "|<- data length: " + datagramPacket.getData().length);
         Log.d(TAG, "|<- port: " + datagramPacket.getPort());
         Log.d(TAG, "|<- socketaddress: " + datagramPacket.getSocketAddress().toString());
-        Log.d(TAG, "|<- data in hex: " + HexHelper.toString(datagramPacket.getData()));
         Log.d(TAG, "|<- --- incoming Datagram Packet ---");
     }
 

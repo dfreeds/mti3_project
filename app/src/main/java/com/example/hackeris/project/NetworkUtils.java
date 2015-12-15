@@ -22,13 +22,13 @@ public class NetworkUtils {
         return output;
     }
 
-    public static String byteArrayToHexString(byte[] src, int length) {
+    public static String byteArrayToHexString(byte[] src) {
 
         StringBuilder stringBuilder = new StringBuilder("");
         if (src == null || src.length <= 0) {
             return null;
         }
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < src.length; i++) {
             int v = src[i] & 0xFF;
             String hv = Integer.toHexString(v);
             stringBuilder.append(' ');
@@ -63,9 +63,9 @@ public class NetworkUtils {
         return ipAddress.toString();
     }
 
-    public static void logIPPack(String TAG, ByteBuffer packet, int length){
+    public static void logIPPack(String TAG, ByteBuffer packet){
 
-        Log.i(TAG, "\n" + NetworkUtils.byteArrayToHexString(packet.array(), length));
+        Log.i(TAG, "\n" + NetworkUtils.byteArrayToHexString(packet.array()));
         String sourceAddress = NetworkUtils.longToAddressString(NetworkUtils.byteToLong(packet.array(), 12));
         String destAddress = NetworkUtils.longToAddressString(NetworkUtils.byteToLong(packet.array(), 16));
         Log.i(TAG, "from " + sourceAddress + " to " + destAddress);
