@@ -266,31 +266,17 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
             Log.d(TAG, "|-> TCP Packet (addr: " + tcpPacket.getDestinationAddress() + " port: " + tcpPacket.getDestinationPort() + " saddr: " + tcpConnection.getSocket().getLocalAddress() + " sport: " + tcpConnection.getSocket().getLocalPort() + ")");
 
-            Log.d(TAG, "tcppacket.data: " + NetworkUtils.byteArrayToHexString(tcpPacket.getData()));
+            Log.d(TAG, "..writing tcppacket.data: " + NetworkUtils.byteArrayToHexString(tcpPacket.getData()));
 
             outToServer.write(tcpPacket.getData());
 
             if (read) {
-                char[] buffer = new char[PACK_SIZE * 20];
-
-                while ((inFromServer.read(buffer, 0, PACK_SIZE * 20)) != -1) {
-                    Log.d(TAG, "### ");
-                    Log.d(TAG, new String(buffer));
-                    Log.d(TAG, "###");
-
-                    //TODO maybe have to split into more packets
-                    try {
-                        sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, buffer));
-                    } catch (NetUtilsException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            /*String line = null;
-            while ((line = inFromServer.readLine()) != null)
-            {
-                Log.d (TAG, "|<- tcp answer: " + line);
-            }*/
+                TCPReceiver tcpReceiver = new TCPReceiver();
+                tcpReceiver.setInFromServer(inFromServer);
+                tcpReceiver.setTcpPacket(tcpPacket);
+                tcpReceiver.setTcpConnection(tcpConnection);
+                tcpReceiver.setService(this);
+                new Thread (tcpReceiver).start ();
             }
         }
         else {
@@ -302,31 +288,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         }
     }
 
-    private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, char[] buffer) throws NetUtilsException
-    {
-        TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
-        tcpPacketBuilder.setACKFlag(true);
-        tcpPacketBuilder.setFINFlag(tcpPacket.isFin());
-        tcpPacketBuilder.setSeqNum(tcpConnection.getNextSequenceNumber());
-        tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1);
-        tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
-        tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
-        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
-        tcpPacketBuilder.setPayload(trimTrailingZeros(new String(buffer).getBytes()));
-
-        IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
-        ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
-        ipv4.setDstAddr(new IPv4Address(tcpPacket.getSourceAddress()));
-        ipv4.setId(tcpPacket.getId() + 1);
-        ipv4.setTos(tcpPacket.getTypeOfService());
-        ipv4.setFragFlags(2);
-        ipv4.setTTL(64);
-        ipv4.addL4Buider(tcpPacketBuilder);
-
-        return (TCPPacketIpv4) tcpPacketBuilder.createTCPPacket();
-    }
-
-    private void sendTCPPacketToVPN(TCPPacketIpv4 tcpPacketToSend) throws IOException, NetUtilsException {
+    public void sendTCPPacketToVPN(TCPPacketIpv4 tcpPacketToSend) throws IOException, NetUtilsException {
         //Log.d (TAG, HexHelper.toString(tcpPacketToSend.getRawBytes()));
 
         IPPacket ipPacket = new IPPacket(14, tcpPacketToSend.getRawBytes());
@@ -359,7 +321,6 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         udpPacketBuilder.setSrcPort(udpPacket.getDestinationPort());
         udpPacketBuilder.setDstPort(udpPacket.getSourcePort());
         udpPacketBuilder.setPayload(trimTrailingZeros(data));
-        //TODO check if trailing zeros is okay - or better replace it with a new byte array with correct length
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(ipPacket.getDestinationAddress()));
