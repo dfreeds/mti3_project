@@ -25,28 +25,9 @@ public class TCPReceiver implements Runnable{
 
     private static final String TAG = "DemoVPNService";
 
-    public void setService(DemoVPNService service) {
-        this.service = service;
-    }
-
-    DemoVPNService service;
-
-    public void setTcpConnection(TCPConnection tcpConnection) {
-        this.tcpConnection = tcpConnection;
-    }
-
+    private DemoVPNService service;
     private TCPConnection tcpConnection;
-
-    public void setTcpPacket(TCPPacket tcpPacket) {
-        this.tcpPacket = tcpPacket;
-    }
-
     private TCPPacket tcpPacket;
-
-    public void setInFromServer(BufferedReader inFromServer) {
-        this.inFromServer = inFromServer;
-    }
-
     private BufferedReader inFromServer;
 
     @Override
@@ -57,14 +38,16 @@ public class TCPReceiver implements Runnable{
             try {
                 while ((inFromServer.read(buffer, 0, 1388)) != -1) {
                     Log.d(TAG, "### ");
-                    Log.d(TAG, new String(buffer));
+                    Log.d(TAG, new String (trimTrailingZeros(new String(buffer).getBytes())));
                     Log.d(TAG, "###");
 
                     try {
-                        service.sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, buffer));
+                        service.sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, trimTrailingZeros(new String(buffer).getBytes())));
                     } catch (NetUtilsException e) {
                         e.printStackTrace();
                     }
+
+                    buffer = new char[1388];
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -77,22 +60,23 @@ public class TCPReceiver implements Runnable{
         }
     }
 
-    private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, char[] buffer) throws NetUtilsException
+    private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, byte[] bytes) throws NetUtilsException
     {
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
         tcpPacketBuilder.setACKFlag(true);
-        tcpPacketBuilder.setFINFlag(tcpPacket.isFin());
+        tcpPacketBuilder.setFINFlag(false);
         tcpPacketBuilder.setSeqNum(tcpConnection.getNextSequenceNumber());
-        tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1);
+        tcpPacketBuilder.setAckNum(tcpConnection.getAckNumber());
         tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
-        tcpPacketBuilder.setPayload(trimTrailingZeros(new String(buffer).getBytes()));
+        tcpPacketBuilder.setPayload(bytes);
+        tcpConnection.setLastDataSize(bytes.length);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
         ipv4.setDstAddr(new IPv4Address(tcpPacket.getSourceAddress()));
-        ipv4.setId(tcpPacket.getId() + 1);
+        ipv4.setId(tcpConnection.getNextIdNumber());
         ipv4.setTos(tcpPacket.getTypeOfService());
         ipv4.setFragFlags(2);
         ipv4.setTTL(64);
@@ -110,5 +94,18 @@ public class TCPReceiver implements Runnable{
         }
 
         return Arrays.copyOf(bytes, i + 1);
+    }
+
+    public void setService(DemoVPNService service) {
+        this.service = service;
+    }
+    public void setTcpConnection(TCPConnection tcpConnection) {
+        this.tcpConnection = tcpConnection;
+    }
+    public void setInFromServer(BufferedReader inFromServer) {
+        this.inFromServer = inFromServer;
+    }
+    public void setTcpPacket(TCPPacket tcpPacket) {
+        this.tcpPacket = tcpPacket;
     }
 }

@@ -138,12 +138,14 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         while (true) {
 
+            packet = ByteBuffer.allocate(PACK_SIZE);
+
             int length = mInputStream.read(packet.array());
             if (length > 0) {
 
                 packet.limit(length);
 
-                Log.d (TAG, "--- new incoming packet ---");
+                Log.d(TAG, "--- new incoming packet ---");
                 Log.d(TAG, "->| " + HexHelper.toString(packet.array()));
                 IPPacket ipPacket = new IPPacket(0, packet.array ());
                 Log.i(TAG, "->| " + ipPacket.toColoredVerboseString(false));
@@ -158,37 +160,54 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
                     if (tcpConnection != null || tcpPacket.isSyn())
                     {
+                        if (tcpConnection != null) {
+                            tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), tcpPacket.getData().length);
+                        }
+
                         if (tcpPacket.isSyn())
                         {
                             if (tcpConnection == null) {
                                 tcpConnection = new TCPConnection(createSocketConnection(tcpPacket));
                                 tcpConnections.put(tcpPacket.getSourcePort(), tcpConnection);
+                                tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), 1);
                             }
 
+                            Log.d (TAG, "SYN ACK Handshake");
                             //opening handshake towards VPN
                             try {
-                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, true, tcpConnection.getNextSequenceNumber()));
+                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, true, tcpConnection));
                             } catch (NetUtilsException e) {
                                 e.printStackTrace();
                             }
 
+                            //outgoing packet
                             if (tcpPacket.getData().length > 0) {
                                 sendTCPData(tcpConnection, tcpPacket, false);
                             }
                         }
                         else if (tcpPacket.isFin())
                         {
+                            Log.d (TAG, "FIN ACK Handshake");
                             //closing handshake towards VPN
                             try {
-                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection.getNextSequenceNumber()));
+                                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection));
                             } catch (NetUtilsException e) {
                                 e.printStackTrace();
                             }
 
+                            //close connection outwards
                             tcpConnection.getSocket().close();
                             tcpConnections.remove(tcpPacket.getSourcePort());
                         } else {
                             if (tcpPacket.getData().length > 0) {
+                                //send ACK first!
+                                try {
+                                    sendTCPPacketToVPN(buildAckPacket(tcpPacket, tcpConnection));
+                                } catch (NetUtilsException e) {
+                                    e.printStackTrace();
+                                }
+
+                                //outgoing packet
                                 sendTCPData(tcpConnection, tcpPacket, true);
                             }
                         }
@@ -228,7 +247,31 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         }
     }
 
-    private TCPPacketIpv4 buildHandshakePacket(TCPPacket tcpPacket, boolean isSyn, long sequenceNumber) throws NetUtilsException
+    private TCPPacketIpv4 buildAckPacket(TCPPacket tcpPacket, TCPConnection tcpConnection) throws NetUtilsException
+    {
+        TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
+        tcpPacketBuilder.setACKFlag(true);
+        tcpPacketBuilder.setSeqNum(tcpConnection.getNextSequenceNumber());
+        tcpPacketBuilder.setAckNum(tcpConnection.getAckNumber());
+        tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
+        tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
+        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
+
+        tcpConnection.setLastDataSize(0);
+
+        IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
+        ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
+        ipv4.setDstAddr(new IPv4Address(tcpPacket.getSourceAddress()));
+        ipv4.setId(tcpConnection.getNextIdNumber());
+        ipv4.setTos(tcpPacket.getTypeOfService());
+        ipv4.setFragFlags(2);
+        ipv4.setTTL(64);
+        ipv4.addL4Buider(tcpPacketBuilder);
+
+        return (TCPPacketIpv4) tcpPacketBuilder.createTCPPacket();
+    }
+
+    private TCPPacketIpv4 buildHandshakePacket(TCPPacket tcpPacket, boolean isSyn, TCPConnection tcpConnection) throws NetUtilsException
     {
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
         tcpPacketBuilder.setACKFlag(true);
@@ -240,16 +283,18 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         {
             tcpPacketBuilder.setFINFlag(true);
         }
-        tcpPacketBuilder.setSeqNum(sequenceNumber);
-        tcpPacketBuilder.setAckNum(tcpPacket.getSequenceNumber() + 1);
+        tcpPacketBuilder.setSeqNum(tcpConnection.getNextSequenceNumber());
+        tcpPacketBuilder.setAckNum(tcpConnection.getAckNumber());
         tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
 
+        tcpConnection.setLastDataSize(1);
+
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
         ipv4.setDstAddr(new IPv4Address(tcpPacket.getSourceAddress()));
-        ipv4.setId(tcpPacket.getId() + 1);
+        ipv4.setId(tcpConnection.getNextIdNumber());
         ipv4.setTos(tcpPacket.getTypeOfService());
         ipv4.setFragFlags(2);
         ipv4.setTTL(64);
@@ -266,22 +311,30 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
             Log.d(TAG, "|-> TCP Packet (addr: " + tcpPacket.getDestinationAddress() + " port: " + tcpPacket.getDestinationPort() + " saddr: " + tcpConnection.getSocket().getLocalAddress() + " sport: " + tcpConnection.getSocket().getLocalPort() + ")");
 
-            Log.d(TAG, "..writing tcppacket.data: " + NetworkUtils.byteArrayToHexString(tcpPacket.getData()));
+            Log.d(TAG, "..writing tcppacket.data: ");
+            Log.d(TAG, "[" + new String (tcpPacket.getData()) + "]");
+            Log.d(TAG, "..data end");
 
             outToServer.write(tcpPacket.getData());
 
             if (read) {
-                TCPReceiver tcpReceiver = new TCPReceiver();
-                tcpReceiver.setInFromServer(inFromServer);
-                tcpReceiver.setTcpPacket(tcpPacket);
-                tcpReceiver.setTcpConnection(tcpConnection);
-                tcpReceiver.setService(this);
-                new Thread (tcpReceiver).start ();
+                if (tcpConnection.getTcpReceiver() == null) {
+                    TCPReceiver tcpReceiver = new TCPReceiver();
+                    tcpReceiver.setInFromServer(inFromServer);
+                    tcpReceiver.setTcpPacket(tcpPacket);
+                    tcpReceiver.setTcpConnection(tcpConnection);
+                    tcpReceiver.setService(this);
+                    tcpConnection.setTcpReceiver(tcpReceiver);
+                    new Thread(tcpReceiver).start();
+                } else {
+                    tcpConnection.getTcpReceiver().setTcpPacket(tcpPacket);
+                }
             }
         }
         else {
+            //FIN
             try {
-                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection.getNextSequenceNumber()));
+                sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection));
             } catch (NetUtilsException e) {
                 e.printStackTrace();
             }
@@ -289,13 +342,14 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     }
 
     public void sendTCPPacketToVPN(TCPPacketIpv4 tcpPacketToSend) throws IOException, NetUtilsException {
-        //Log.d (TAG, HexHelper.toString(tcpPacketToSend.getRawBytes()));
 
         IPPacket ipPacket = new IPPacket(14, tcpPacketToSend.getRawBytes());
         Log.d(TAG, "<-| " + ipPacket.toColoredVerboseString(false));
         Log.d(TAG, "<-| " + new TCPPacket(14, tcpPacketToSend.getRawBytes()).toColoredVerboseString(false));
         //Log.d(TAG, "<-| TCP.data: " + HexHelper.toString(new UDPPacket(14, tcpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
+
+        Log.d (TAG, "<-| ### " + HexHelper.toString(ipPacket.getEthernetData()));
 
         Log.d(TAG, "// writing tcp packet to vpn");
         mOutputStream.write(ipPacket.getEthernetData());
