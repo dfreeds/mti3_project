@@ -8,8 +8,10 @@ import android.util.Log;
 
 import net.sourceforge.jpcap.net.TCPPacket;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import edu.huji.cs.netutils.NetUtilsException;
@@ -28,36 +30,48 @@ public class TCPReceiver implements Runnable{
     private DemoVPNService service;
     private TCPConnection tcpConnection;
     private TCPPacket tcpPacket;
-    private BufferedReader inFromServer;
+    private InputStream inFromServer;
 
     @Override
     public void run() {
-        while (true) {
-            char[] buffer = new char[1388];
+        try {
+            while (true) {
+                byte[] buffer = new byte[1388];
+                int bytesRead = 0;
 
-            try {
-                while ((inFromServer.read(buffer, 0, 1388)) != -1) {
-                    Log.d(TAG, "### ");
-                    Log.d(TAG, new String (trimTrailingZeros(new String(buffer).getBytes())));
+                while ((bytesRead = inFromServer.read(buffer, 0, 1388)) != -1) {
+                    byte[] actualReadBytes = Arrays.copyOf(buffer, bytesRead);
+                    Log.d(TAG, "### chars read:");
+                    Log.d(TAG, actualReadBytes.toString());
                     Log.d(TAG, "###");
 
                     try {
-                        service.sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, trimTrailingZeros(new String(buffer).getBytes())));
+                        service.sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, actualReadBytes));
                     } catch (NetUtilsException e) {
                         e.printStackTrace();
                     }
 
-                    buffer = new char[1388];
+                    buffer = new byte[1388];
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private static byte[] toBytes(char[] payload){
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(bOut);
+        writer.print(payload);
+        writer.close();
+
+        return bOut.toByteArray();
     }
 
     private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, byte[] bytes) throws NetUtilsException
@@ -72,6 +86,7 @@ public class TCPReceiver implements Runnable{
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
         tcpPacketBuilder.setPayload(bytes);
         tcpConnection.setLastDataSize(bytes.length);
+        Log.d(TAG, "@@@ bytes.length: " + bytes.length);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
@@ -82,18 +97,7 @@ public class TCPReceiver implements Runnable{
         ipv4.setTTL(64);
         ipv4.addL4Buider(tcpPacketBuilder);
 
-        return (TCPPacketIpv4) tcpPacketBuilder.createTCPPacket();
-    }
-
-    private byte[] trimTrailingZeros(byte[] bytes)
-    {
-        int i = bytes.length - 1;
-        while (i >= 0 && bytes[i] == 0)
-        {
-            --i;
-        }
-
-        return Arrays.copyOf(bytes, i + 1);
+        return (TCPPacketIpv4)tcpPacketBuilder.createTCPPacket();
     }
 
     public void setService(DemoVPNService service) {
@@ -102,7 +106,7 @@ public class TCPReceiver implements Runnable{
     public void setTcpConnection(TCPConnection tcpConnection) {
         this.tcpConnection = tcpConnection;
     }
-    public void setInFromServer(BufferedReader inFromServer) {
+    public void setInFromServer(InputStream inFromServer) {
         this.inFromServer = inFromServer;
     }
     public void setTcpPacket(TCPPacket tcpPacket) {

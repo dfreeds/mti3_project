@@ -19,12 +19,10 @@ import net.sourceforge.jpcap.net.TCPPacket;
 import net.sourceforge.jpcap.net.UDPPacket;
 import net.sourceforge.jpcap.util.HexHelper;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -146,7 +144,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 packet.limit(length);
 
                 Log.d(TAG, "--- new incoming packet ---");
-                Log.d(TAG, "->| " + HexHelper.toString(packet.array()));
+                Log.d(TAG, "->| " + HexHelper.toString(trimTrailingZeros(packet.array())));
+                System.out.println ("00000000   " + HexHelper.toString(trimTrailingZeros(packet.array())));
                 IPPacket ipPacket = new IPPacket(0, packet.array ());
                 Log.i(TAG, "->| " + ipPacket.toColoredVerboseString(false));
 
@@ -307,7 +306,6 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     {
         if (tcpConnection.getSocket().isConnected()) {
             DataOutputStream outToServer = new DataOutputStream(tcpConnection.getSocket().getOutputStream());
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(tcpConnection.getSocket().getInputStream()));
 
             Log.d(TAG, "|-> TCP Packet (addr: " + tcpPacket.getDestinationAddress() + " port: " + tcpPacket.getDestinationPort() + " saddr: " + tcpConnection.getSocket().getLocalAddress() + " sport: " + tcpConnection.getSocket().getLocalPort() + ")");
 
@@ -320,7 +318,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
             if (read) {
                 if (tcpConnection.getTcpReceiver() == null) {
                     TCPReceiver tcpReceiver = new TCPReceiver();
-                    tcpReceiver.setInFromServer(inFromServer);
+                    tcpReceiver.setInFromServer(tcpConnection.getSocket().getInputStream());
                     tcpReceiver.setTcpPacket(tcpPacket);
                     tcpReceiver.setTcpConnection(tcpConnection);
                     tcpReceiver.setService(this);
@@ -349,10 +347,18 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         //Log.d(TAG, "<-| TCP.data: " + HexHelper.toString(new UDPPacket(14, tcpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
 
-        Log.d (TAG, "<-| ### " + HexHelper.toString(ipPacket.getEthernetData()));
+        //Log.d(TAG, "<-| " + HexHelper.toString(ipPacket.getEthernetData()));
+        Log.d(TAG, "<-| " + HexHelper.toString (Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
+        Log.d(TAG, "<-| " + HexHelper.toString(tcpPacketToSend.getRawBytes()));
+        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
+        //System.out.println("-> 00000000   " + HexHelper.toString(ipPacket.getEthernetData()));
+
+        Log.d(TAG, "<-| @@@@ " + tcpPacketToSend.getTotalTCPPlength());
+        Log.d(TAG, "<-| @@@@ " + tcpPacketToSend.getPayloadDataLength());
+        Log.d(TAG, "<-| @@@@ " + (tcpPacketToSend.getRawBytes().length - 14));
 
         Log.d(TAG, "// writing tcp packet to vpn");
-        mOutputStream.write(ipPacket.getEthernetData());
+        mOutputStream.write(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length));
     }
 
     private void sendUDPPacketToVPN(IPPacket ipPacket, byte[] data) throws IOException, NetUtilsException {
