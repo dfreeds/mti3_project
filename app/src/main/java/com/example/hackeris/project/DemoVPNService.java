@@ -194,10 +194,16 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                                 e.printStackTrace();
                             }
 
-                            //close connection outwards
+                            tcpConnection.setToClose(true);
+                        }
+                        else if (tcpPacket.isRst())
+                        {
+                            //just close connection outwards
                             tcpConnection.getSocket().close();
                             tcpConnections.remove(tcpPacket.getSourcePort());
-                        } else {
+                        }
+                        else
+                        {
                             if (tcpPacket.getData().length > 0) {
                                 //send ACK first!
                                 try {
@@ -209,12 +215,23 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                                 //outgoing packet
                                 sendTCPData(tcpConnection, tcpPacket, true);
                             }
+                            else if (tcpConnection.isToClose ())
+                            {
+                                //close connection outwards
+                                tcpConnection.getSocket().close();
+                                tcpConnections.remove(tcpPacket.getSourcePort());
+                            }
+
                         }
                     }
                     else
                     {
-                        Log.d (TAG, "// none of us");
-                        //TODO it's none of us - reset?
+                        Log.d (TAG, "// none of us, sending RST");
+                        try {
+                            sendTCPPacketToVPN(buildRstPacket(tcpPacket));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 else if (ipPacket.getProtocol() == 17)
@@ -244,6 +261,26 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 e.printStackTrace();
             }
         }
+    }
+
+    private TCPPacketIpv4 buildRstPacket(TCPPacket tcpPacket) throws NetUtilsException {
+        TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
+        tcpPacketBuilder.setRSTFlag(true);
+        tcpPacketBuilder.setSeqNum(1);
+        tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
+        tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
+        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
+
+        IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
+        ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
+        ipv4.setDstAddr(new IPv4Address(tcpPacket.getSourceAddress()));
+        ipv4.setId(0);
+        ipv4.setTos(tcpPacket.getTypeOfService());
+        ipv4.setFragFlags(2);
+        ipv4.setTTL(64);
+        ipv4.addL4Buider(tcpPacketBuilder);
+
+        return (TCPPacketIpv4) tcpPacketBuilder.createTCPPacket();
     }
 
     private TCPPacketIpv4 buildAckPacket(TCPPacket tcpPacket, TCPConnection tcpConnection) throws NetUtilsException
@@ -288,7 +325,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
 
-        tcpConnection.setLastDataSize(1);
+        tcpConnection.setLastDataSize(isSyn ? 1 : 0);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
@@ -347,15 +384,9 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         //Log.d(TAG, "<-| TCP.data: " + HexHelper.toString(new UDPPacket(14, tcpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
 
-        //Log.d(TAG, "<-| " + HexHelper.toString(ipPacket.getEthernetData()));
-        Log.d(TAG, "<-| " + HexHelper.toString (Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
-        Log.d(TAG, "<-| " + HexHelper.toString(tcpPacketToSend.getRawBytes()));
+        //Log.d(TAG, "<-| " + HexHelper.toString (Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
         System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
         //System.out.println("-> 00000000   " + HexHelper.toString(ipPacket.getEthernetData()));
-
-        Log.d(TAG, "<-| @@@@ " + tcpPacketToSend.getTotalTCPPlength());
-        Log.d(TAG, "<-| @@@@ " + tcpPacketToSend.getPayloadDataLength());
-        Log.d(TAG, "<-| @@@@ " + (tcpPacketToSend.getRawBytes().length - 14));
 
         Log.d(TAG, "// writing tcp packet to vpn");
         mOutputStream.write(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length));
@@ -364,15 +395,16 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     private void sendUDPPacketToVPN(IPPacket ipPacket, byte[] data) throws IOException, NetUtilsException {
         UDPPacketIpv4 udpPacketToSend = buildUDPPacket (ipPacket, data);
 
-        //Log.e (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
+        //Log.d (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
 
         ipPacket = new IPPacket(14, udpPacketToSend.getRawBytes());
-        Log.i(TAG, "<-| " + ipPacket.toColoredVerboseString(false));
+        Log.d(TAG, "<-| " + ipPacket.toColoredVerboseString(false));
         //Log.d(TAG, "<-| UDP.data: " + HexHelper.toString(new UDPPacket(14, udpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
+        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
 
         //Log.d(TAG, "// writing received udp packet back to vpn");
-        mOutputStream.write(ipPacket.getEthernetData());
+        mOutputStream.write(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length));
     }
 
     private UDPPacketIpv4 buildUDPPacket(IPPacket ipPacket, byte[] data) throws NetUtilsException {

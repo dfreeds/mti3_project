@@ -16,6 +16,16 @@ public class TCPConnection {
     private int id = -1;
     private int lastDataSize = 0;
 
+    public boolean isToClose() {
+        return toClose;
+    }
+
+    public void setToClose(boolean toClose) {
+        this.toClose = toClose;
+    }
+
+    private boolean toClose = false;
+
     private TCPReceiver tcpReceiver = null;
 
     public TCPConnection (Socket socket)

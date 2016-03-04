@@ -4,14 +4,10 @@
 
 package com.example.hackeris.project;
 
-import android.util.Log;
-
 import net.sourceforge.jpcap.net.TCPPacket;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import edu.huji.cs.netutils.NetUtilsException;
@@ -26,6 +22,7 @@ import edu.huji.cs.netutils.parse.TCPPacketIpv4;
 public class TCPReceiver implements Runnable{
 
     private static final String TAG = "DemoVPNService";
+    private static final int DATA_LENGTH = 1200;
 
     private DemoVPNService service;
     private TCPConnection tcpConnection;
@@ -36,14 +33,14 @@ public class TCPReceiver implements Runnable{
     public void run() {
         try {
             while (true) {
-                byte[] buffer = new byte[1388];
+                byte[] buffer = new byte[DATA_LENGTH];
                 int bytesRead = 0;
 
-                while ((bytesRead = inFromServer.read(buffer, 0, 1388)) != -1) {
+                while ((bytesRead = inFromServer.read(buffer, 0, DATA_LENGTH)) != -1) {
                     byte[] actualReadBytes = Arrays.copyOf(buffer, bytesRead);
-                    Log.d(TAG, "### chars read:");
-                    Log.d(TAG, actualReadBytes.toString());
-                    Log.d(TAG, "###");
+                    //Log.d(TAG, "### bytes read:");
+                    //Log.d(TAG, HexHelper.toString(actualReadBytes));
+                    //Log.d(TAG, "###");
 
                     try {
                         service.sendTCPPacketToVPN(buildTCPPacket(tcpConnection, tcpPacket, actualReadBytes));
@@ -51,7 +48,7 @@ public class TCPReceiver implements Runnable{
                         e.printStackTrace();
                     }
 
-                    buffer = new byte[1388];
+                    buffer = new byte[DATA_LENGTH];
                 }
 
                 try {
@@ -63,15 +60,6 @@ public class TCPReceiver implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static byte[] toBytes(char[] payload){
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(bOut);
-        writer.print(payload);
-        writer.close();
-
-        return bOut.toByteArray();
     }
 
     private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, byte[] bytes) throws NetUtilsException
@@ -86,7 +74,7 @@ public class TCPReceiver implements Runnable{
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
         tcpPacketBuilder.setPayload(bytes);
         tcpConnection.setLastDataSize(bytes.length);
-        Log.d(TAG, "@@@ bytes.length: " + bytes.length);
+        //Log.d(TAG, "@@@ bytes.length: " + bytes.length);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
