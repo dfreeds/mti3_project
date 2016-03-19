@@ -28,6 +28,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
@@ -44,19 +45,17 @@ import edu.huji.cs.netutils.parse.UDPPacketIpv4;
 
 public class DemoVPNService extends VpnService implements Handler.Callback, Runnable {
 
-    private static final String TAG = "DemoVPNService";
+    private static final String TAG = "TracingVPNService";
 
     private Handler mHandler;
-
     private Thread mThread;
-
     private ParcelFileDescriptor mInterface;
-
     private FileInputStream mInputStream;
-
     private FileOutputStream mOutputStream;
 
     private static final int PACK_SIZE = 32767 * 2;
+
+    private String vpnIP = "10.0.0.42";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -117,7 +116,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         VpnService.Builder builder = new VpnService.Builder();
         //TODO compare to local address - has to be different!
-        builder.addAddress("10.0.0.42", 32).addRoute("0.0.0.0", 0).setSession("DemoVPN").addDnsServer("8.8.8.8").setMtu(1500);
+        builder.addAddress(vpnIP, 32).addRoute("0.0.0.0", 0).setSession("TracingVPN").addDnsServer("8.8.8.8").setMtu(1500);
 
         mInterface = builder.establish();
 
@@ -133,6 +132,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         ByteBuffer packet = ByteBuffer.allocate(PACK_SIZE);
         HashMap<Integer, TCPConnection> tcpConnections = new HashMap<> ();
         TCPConnection tcpConnection;
+        byte[] bytes;
 
         while (true) {
 
@@ -141,18 +141,19 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
             int length = mInputStream.read(packet.array());
             if (length > 0) {
 
-                packet.limit(length);
+                bytes = Arrays.copyOf(packet.array (), length);
+
 
                 Log.d(TAG, "--- new incoming packet ---");
-                Log.d(TAG, "->| " + HexHelper.toString(trimTrailingZeros(packet.array())));
-                System.out.println ("00000000   " + HexHelper.toString(trimTrailingZeros(packet.array())));
-                IPPacket ipPacket = new IPPacket(0, packet.array ());
+                Log.d(TAG, "->| " + HexHelper.toString(bytes));
+                System.out.println ("00000000   " + HexHelper.toString(bytes));
+                IPPacket ipPacket = new IPPacket(0, bytes);
                 Log.i(TAG, "->| " + ipPacket.toColoredVerboseString(false));
 
                 if (ipPacket.getProtocol() == 6)
                 {
                     //TCP
-                    TCPPacket tcpPacket = new TCPPacket(0, packet.array());
+                    TCPPacket tcpPacket = new TCPPacket(0, bytes);
                     Log.i(TAG, "->| " + tcpPacket.toColoredVerboseString(false));
 
                     tcpConnection = tcpConnections.get(tcpPacket.getSourcePort());
@@ -350,19 +351,28 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
             Log.d(TAG, "[" + new String (tcpPacket.getData()) + "]");
             Log.d(TAG, "..data end");
 
-            outToServer.write(tcpPacket.getData());
+            try {
+                outToServer.write(tcpPacket.getData());
 
-            if (read) {
-                if (tcpConnection.getTcpReceiver() == null) {
-                    TCPReceiver tcpReceiver = new TCPReceiver();
-                    tcpReceiver.setInFromServer(tcpConnection.getSocket().getInputStream());
-                    tcpReceiver.setTcpPacket(tcpPacket);
-                    tcpReceiver.setTcpConnection(tcpConnection);
-                    tcpReceiver.setService(this);
-                    tcpConnection.setTcpReceiver(tcpReceiver);
-                    new Thread(tcpReceiver).start();
-                } else {
-                    tcpConnection.getTcpReceiver().setTcpPacket(tcpPacket);
+                if (read) {
+                    if (tcpConnection.getTcpReceiver() == null) {
+                        TCPReceiver tcpReceiver = new TCPReceiver();
+                        tcpReceiver.setInFromServer(tcpConnection.getSocket().getInputStream());
+                        tcpReceiver.setTcpPacket(tcpPacket);
+                        tcpReceiver.setTcpConnection(tcpConnection);
+                        tcpReceiver.setService(this);
+                        tcpConnection.setTcpReceiver(tcpReceiver);
+                        new Thread(tcpReceiver).start();
+                    } else {
+                        tcpConnection.getTcpReceiver().setTcpPacket(tcpPacket);
+                    }
+                }
+            } catch (SocketException e) {
+                //FIN
+                try {
+                    sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection));
+                } catch (NetUtilsException e1) {
+                    e1.printStackTrace();
                 }
             }
         }

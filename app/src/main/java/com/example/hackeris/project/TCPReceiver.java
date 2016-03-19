@@ -21,7 +21,7 @@ import edu.huji.cs.netutils.parse.TCPPacketIpv4;
  */
 public class TCPReceiver implements Runnable{
 
-    private static final String TAG = "DemoVPNService";
+    private static final String TAG = "TracingVPNService";
     private static final int DATA_LENGTH = 1200;
 
     private DemoVPNService service;
@@ -74,7 +74,6 @@ public class TCPReceiver implements Runnable{
         tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
         tcpPacketBuilder.setPayload(bytes);
         tcpConnection.setLastDataSize(bytes.length);
-        //Log.d(TAG, "@@@ bytes.length: " + bytes.length);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
