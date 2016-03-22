@@ -3,6 +3,7 @@ package com.example.hackeris.project;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class NetworkUtils {
@@ -69,5 +70,36 @@ public class NetworkUtils {
         String sourceAddress = NetworkUtils.longToAddressString(NetworkUtils.byteToLong(packet.array(), 12));
         String destAddress = NetworkUtils.longToAddressString(NetworkUtils.byteToLong(packet.array(), 16));
         Log.i(TAG, "from " + sourceAddress + " to " + destAddress);
+    }
+
+    public static String getDomainName(byte[] data) {
+        ArrayList<Byte> query = new ArrayList<Byte>();
+
+        //skip the header
+        int pos = 41;
+        byte block = data[pos];
+
+        while( block != 0x00 && pos < data.length ) {
+
+            //If byte is over 0x21, then it's an ASCII character and
+            //we can add the byte to the string as-is
+            if (block >= 0x21) {
+                query.add(block);
+            } else {
+                //Otherwise add the ASCII dot character
+                query.add((byte) 0x2e);
+            }
+
+            ++pos;
+            block = data[pos];
+        }
+
+        //Convert ArrayList query to string
+        byte[] buffer = new byte[query.size()];
+        for( int i = 0; i < buffer.length; ++i ) {
+            buffer[i] = query.get(i);
+        }
+
+        return new String(buffer);
     }
 }

@@ -1,13 +1,10 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="3mm"
-        android:gravity="center_vertical|center_horizontal">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:gravity="center_horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
         <Button
             android:id="@+id/btn_connect"
@@ -19,5 +16,10 @@
             style="@style/item"
             android:text="@string/disconnect" />
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/domainNameAccessListView"
+            android:layout_gravity="center_horizontal" />
+
     </LinearLayout>
-</ScrollView>

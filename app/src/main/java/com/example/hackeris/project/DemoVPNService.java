@@ -31,8 +31,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
@@ -56,6 +58,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     private static final int PACK_SIZE = 32767 * 2;
 
     private String vpnIP = "10.0.0.42";
+    private List<String> domainNameBlackList = new ArrayList<String>();
+    private MainActivity mainActivity;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -238,15 +242,24 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 else if (ipPacket.getProtocol() == 17)
                 {
                     //UDP
-                    DatagramSocket socket = sendDatagramPacket (packet.array());
-                    DatagramPacket datagramPacket = receiveDatagramPacket(socket);
-                    socket.close();
+                    if (isCleanDomainName(NetworkUtils.getDomainName(packet.array()))) {
 
-                    try {
-                        sendUDPPacketToVPN (ipPacket, datagramPacket.getData());
-                    } catch (NetUtilsException e) {
-                        e.printStackTrace();
+                        DatagramSocket socket = sendDatagramPacket(packet.array());
+                        DatagramPacket datagramPacket = receiveDatagramPacket(socket);
+                        socket.close();
+
+                        try {
+                            sendUDPPacketToVPN(ipPacket, datagramPacket.getData());
+                        } catch (NetUtilsException e) {
+                            e.printStackTrace();
+                        }
                     }
+                }
+                else if (ipPacket.getProtocol() == 1)
+                {
+                    //ICMP
+                    InetAddress host = InetAddress.getByName(ipPacket.getDestinationAddress());
+                    Log.d(TAG, "sent ping, answer is: " + host.isReachable(1000));
                 }
                 else
                 {
@@ -264,13 +277,28 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         }
     }
 
+    private boolean isCleanDomainName(String domainName) {
+        boolean retVal = true;
+
+        mainActivity.addDomainNameAccessListEntry(domainName);
+
+        for (String entry : domainNameBlackList) {
+            if (domainName.contains(entry)) {
+                Log.e (TAG, "Blocking DNS request with domain name: " + domainName);
+                retVal = false;
+            }
+        }
+
+        return retVal;
+    }
+
     private TCPPacketIpv4 buildRstPacket(TCPPacket tcpPacket) throws NetUtilsException {
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
         tcpPacketBuilder.setRSTFlag(true);
-        tcpPacketBuilder.setSeqNum(1);
+        tcpPacketBuilder.setSeqNum(0);
         tcpPacketBuilder.setSrcPort(tcpPacket.getDestinationPort());
         tcpPacketBuilder.setDstPort(tcpPacket.getSourcePort());
-        tcpPacketBuilder.setWindowSize(tcpPacket.getWindowSize());
+        tcpPacketBuilder.setWindowSize(0);
 
         IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
         ipv4.setSrcAddr(new IPv4Address(tcpPacket.getDestinationAddress()));
@@ -531,6 +559,10 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     public IBinder onBind(Intent intent) {
 
         return new VPNServiceBinder();
+    }
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 
     public class VPNServiceBinder extends Binder {
