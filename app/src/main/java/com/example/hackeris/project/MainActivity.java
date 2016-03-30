@@ -10,20 +10,21 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private DemoVPNService mVPNService;
     ListView domainNameAccessListView;
-    private List<String> domainNameAccessList = new ArrayList<>();
-    ArrayAdapter<String> domainNameAccessListAdapter;
+
+    public ArrayList<DomainNameAccessListModel> getDomainNameAccessList() {
+        return domainNameAccessList;
+    }
+
+    private ArrayList<DomainNameAccessListModel> domainNameAccessList = new ArrayList<>();
+    DomainNameAccessListAdapter domainNameAccessListAdapter;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -49,30 +50,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // Get ListView object from xml
         domainNameAccessListView = (ListView) findViewById(R.id.domainNameAccessListView);
 
-        domainNameAccessListAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, domainNameAccessList);
+        domainNameAccessListAdapter = new DomainNameAccessListAdapter(this, domainNameAccessList);
 
         domainNameAccessListView.setAdapter(domainNameAccessListAdapter);
-
-        domainNameAccessListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                // ListView Clicked item index
-                int itemPosition     = position;
-
-                // ListView Clicked item value
-                String  itemValue    = (String) domainNameAccessListView.getItemAtPosition(position);
-
-                // Show Alert
-                Toast.makeText(getApplicationContext(),
-                        "Position :" + itemPosition + "  ListItem : " + itemValue, Toast.LENGTH_LONG)
-                        .show();
-
-            }
-        });
     }
 
     @Override
@@ -114,8 +94,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public void addDomainNameAccessListEntry (String entry)
     {
-        if (!domainNameAccessList.contains(entry)) {
-            domainNameAccessList.add(entry);
+        DomainNameAccessListModel model = new DomainNameAccessListModel (entry);
+
+        if (!domainNameAccessList.contains(model)) {
+            domainNameAccessList.add(model);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

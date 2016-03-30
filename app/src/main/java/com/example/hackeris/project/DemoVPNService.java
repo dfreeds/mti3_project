@@ -149,8 +149,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
 
                 Log.d(TAG, "--- new incoming packet ---");
-                Log.d(TAG, "->| " + HexHelper.toString(bytes));
-                System.out.println ("00000000   " + HexHelper.toString(bytes));
+                //Log.d(TAG, "->| " + HexHelper.toString(bytes));
+                //System.out.println ("00000000   " + HexHelper.toString(bytes));
                 IPPacket ipPacket = new IPPacket(0, bytes);
                 Log.i(TAG, "->| " + ipPacket.toColoredVerboseString(false));
 
@@ -282,8 +282,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         mainActivity.addDomainNameAccessListEntry(domainName);
 
-        for (String entry : domainNameBlackList) {
-            if (domainName.contains(entry)) {
+        for (DomainNameAccessListModel entry : mainActivity.getDomainNameAccessList()) {
+            if (entry.isBlacklisted() && domainName.contains(entry.getDomainName())) {
                 Log.e (TAG, "Blocking DNS request with domain name: " + domainName);
                 retVal = false;
             }
@@ -423,7 +423,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
 
         //Log.d(TAG, "<-| " + HexHelper.toString (Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
-        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
+        //System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
         //System.out.println("-> 00000000   " + HexHelper.toString(ipPacket.getEthernetData()));
 
         Log.d(TAG, "// writing tcp packet to vpn");
@@ -439,7 +439,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         Log.d(TAG, "<-| " + ipPacket.toColoredVerboseString(false));
         //Log.d(TAG, "<-| UDP.data: " + HexHelper.toString(new UDPPacket(14, udpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
-        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
+        //System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
 
         //Log.d(TAG, "// writing received udp packet back to vpn");
         mOutputStream.write(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length));
