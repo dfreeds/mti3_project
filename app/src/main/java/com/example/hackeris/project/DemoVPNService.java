@@ -150,7 +150,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
                 Log.d(TAG, "--- new incoming packet ---");
                 //Log.d(TAG, "->| " + HexHelper.toString(bytes));
-                //System.out.println ("00000000   " + HexHelper.toString(bytes));
+                System.out.println ("00000000   " + HexHelper.toString(bytes));
                 IPPacket ipPacket = new IPPacket(0, bytes);
                 Log.i(TAG, "->| " + ipPacket.toColoredVerboseString(false));
 
@@ -165,7 +165,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     if (tcpConnection != null || tcpPacket.isSyn())
                     {
                         if (tcpConnection != null) {
-                            tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), tcpPacket.getData().length);
+                            tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), tcpPacket.isFin() ? tcpPacket.getData().length == 0 ? 1 : tcpPacket.getData().length : tcpPacket.getData().length);
                         }
 
                         if (tcpPacket.isSyn())
@@ -242,24 +242,24 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                 else if (ipPacket.getProtocol() == 17)
                 {
                     //UDP
-                    if (isCleanDomainName(NetworkUtils.getDomainName(packet.array()))) {
+                    UDPPacket udpPacket = new UDPPacket(0, packet.array());
+                    boolean doProcess = true;
 
-                        DatagramSocket socket = sendDatagramPacket(packet.array());
-                        DatagramPacket datagramPacket = receiveDatagramPacket(socket);
-                        socket.close();
-
-                        try {
-                            sendUDPPacketToVPN(ipPacket, datagramPacket.getData());
-                        } catch (NetUtilsException e) {
-                            e.printStackTrace();
+                    if (udpPacket.getDestinationPort() == 53) {
+                        if (!isCleanDomainName(NetworkUtils.getDomainName(packet.array()))) {
+                            doProcess = false;
                         }
+                    }
+
+                    if (doProcess) {
+                        new Thread (new UDPReceiver(DemoVPNService.this, udpPacket)).start ();
                     }
                 }
                 else if (ipPacket.getProtocol() == 1)
                 {
                     //ICMP
                     InetAddress host = InetAddress.getByName(ipPacket.getDestinationAddress());
-                    Log.d(TAG, "sent ping, answer is: " + host.isReachable(1000));
+                    //Log.d(TAG, "sent ping, answer is: " + host.isReachable(1000));
                 }
                 else
                 {
@@ -423,23 +423,21 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
 
         //Log.d(TAG, "<-| " + HexHelper.toString (Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
-        //System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
+        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length)));
         //System.out.println("-> 00000000   " + HexHelper.toString(ipPacket.getEthernetData()));
 
         Log.d(TAG, "// writing tcp packet to vpn");
         mOutputStream.write(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length));
     }
 
-    private void sendUDPPacketToVPN(IPPacket ipPacket, byte[] data) throws IOException, NetUtilsException {
+    public void sendUDPPacketToVPN(IPPacket ipPacket, byte[] data) throws IOException, NetUtilsException {
         UDPPacketIpv4 udpPacketToSend = buildUDPPacket (ipPacket, data);
-
         //Log.d (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
 
         ipPacket = new IPPacket(14, udpPacketToSend.getRawBytes());
-        Log.d(TAG, "<-| " + ipPacket.toColoredVerboseString(false));
         //Log.d(TAG, "<-| UDP.data: " + HexHelper.toString(new UDPPacket(14, udpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
-        //System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
+        System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
 
         //Log.d(TAG, "// writing received udp packet back to vpn");
         mOutputStream.write(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length));
@@ -474,20 +472,20 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
         return datagramPacket;
     }
 
-    private DatagramSocket sendDatagramPacket(byte[] bytes) throws IOException
+    private DatagramSocket sendDatagramPacket(UDPPacket udpPacket) throws IOException
     {
-        UDPPacket udpPacket = new UDPPacket(0, bytes);
         Log.d(TAG, "->| " + udpPacket.toColoredString(false));
 
         DatagramSocket socket = new DatagramSocket();
         protect(socket);
+        Log.d(TAG, "1...");
         //Log.d(TAG, "|-> sending UDP data: " + HexHelper.toString(udpPacket.getData()));
         DatagramPacket datagramPacket = new DatagramPacket(udpPacket.getData(), udpPacket.getLength (), InetAddress.getByName(udpPacket.getDestinationAddress()), udpPacket.getDestinationPort());
-
+        Log.d(TAG, "2...");
         //Log.d (TAG, "|-> " + HexHelper.toString (datagramPacket.getData()));
 
         socket.send(datagramPacket);
-
+        Log.d(TAG, "3...");
         return socket;
     }
 
