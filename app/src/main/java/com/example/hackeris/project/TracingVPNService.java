@@ -31,10 +31,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
@@ -45,7 +43,7 @@ import edu.huji.cs.netutils.parse.TCPPacketIpv4;
 import edu.huji.cs.netutils.parse.UDPPacketIpv4;
 
 
-public class DemoVPNService extends VpnService implements Handler.Callback, Runnable {
+public class TracingVPNService extends VpnService implements Handler.Callback, Runnable {
 
     private static final String TAG = "TracingVPNService";
 
@@ -58,7 +56,6 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
     private static final int PACK_SIZE = 32767 * 2;
 
     private String vpnIP = "10.0.0.42";
-    private List<String> domainNameBlackList = new ArrayList<String>();
     private MainActivity mainActivity;
 
     @Override
@@ -120,7 +117,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         VpnService.Builder builder = new VpnService.Builder();
         //TODO compare to local address - has to be different!
-        builder.addAddress(vpnIP, 32).addRoute("0.0.0.0", 0).setSession("TracingVPN").addDnsServer("8.8.8.8").setMtu(1500);
+        builder.addAddress(vpnIP, 32).addRoute("0.0.0.0", 0).addDnsServer("8.8.8.8").setSession("TracingVPN").setMtu(1500);
 
         mInterface = builder.establish();
 
@@ -134,7 +131,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
         // Allocate the buffer for a single packet.
         ByteBuffer packet = ByteBuffer.allocate(PACK_SIZE);
-        HashMap<Integer, TCPConnection> tcpConnections = new HashMap<> ();
+        HashMap<TCPIdentifier, TCPConnection> tcpConnections = new HashMap<> ();
+        //HashMap<Integer, TCPConnection> tcpConnections = new HashMap<> ();
         TCPConnection tcpConnection;
         byte[] bytes;
 
@@ -160,7 +158,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     TCPPacket tcpPacket = new TCPPacket(0, bytes);
                     Log.i(TAG, "->| " + tcpPacket.toColoredVerboseString(false));
 
-                    tcpConnection = tcpConnections.get(tcpPacket.getSourcePort());
+                    tcpConnection = tcpConnections.get(new TCPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()));
+                    //tcpConnection = tcpConnections.get(tcpPacket.getSourcePort());
 
                     if (tcpConnection != null || tcpPacket.isSyn())
                     {
@@ -172,7 +171,8 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                         {
                             if (tcpConnection == null) {
                                 tcpConnection = new TCPConnection(createSocketConnection(tcpPacket));
-                                tcpConnections.put(tcpPacket.getSourcePort(), tcpConnection);
+                                tcpConnections.put(new TCPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()), tcpConnection);
+                                //tcpConnections.put(tcpPacket.getSourcePort(), tcpConnection);
                                 tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), 1);
                             }
 
@@ -184,7 +184,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                                 e.printStackTrace();
                             }
 
-                            //outgoing packet
+                            //outgoing data
                             if (tcpPacket.getData().length > 0) {
                                 sendTCPData(tcpConnection, tcpPacket, false);
                             }
@@ -252,7 +252,7 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
                     }
 
                     if (doProcess) {
-                        new Thread (new UDPReceiver(DemoVPNService.this, udpPacket)).start ();
+                        new Thread (new UDPReceiver(TracingVPNService.this, udpPacket)).start ();
                     }
                 }
                 else if (ipPacket.getProtocol() == 1)
@@ -565,9 +565,9 @@ public class DemoVPNService extends VpnService implements Handler.Callback, Runn
 
     public class VPNServiceBinder extends Binder {
 
-        public DemoVPNService getService() {
+        public TracingVPNService getService() {
 
-            return DemoVPNService.this;
+            return TracingVPNService.this;
         }
     }
 }

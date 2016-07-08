@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    private DemoVPNService mVPNService;
-    ListView domainNameAccessListView;
+    private TracingVPNService mVPNService;
+    private ListView domainNameAccessListView;
 
     public ArrayList<DomainNameAccessListModel> getDomainNameAccessList() {
         return domainNameAccessList;
@@ -29,7 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mVPNService = ((DemoVPNService.VPNServiceBinder) service).getService();
+            mVPNService = ((TracingVPNService.VPNServiceBinder) service).getService();
             mVPNService.setMainActivity (MainActivity.this);
         }
 
@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         } else if (id == R.id.btn_disconnect) {
             mVPNService.stopVPNService();
-            Intent intent = new Intent(this, DemoVPNService.class);
+            Intent intent = new Intent(this, TracingVPNService.class);
             stopService(intent);
         }
     }
@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onActivityResult(int request, int result, Intent data) {
 
         if (result == RESULT_OK) {
-            Intent intent = new Intent(this, DemoVPNService.class);
+            Intent intent = new Intent(this, TracingVPNService.class);
             startService(intent);
             bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
         }

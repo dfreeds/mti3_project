@@ -22,9 +22,9 @@ import edu.huji.cs.netutils.parse.TCPPacketIpv4;
 public class TCPReceiver implements Runnable{
 
     private static final String TAG = "TracingVPNService";
-    private static final int DATA_LENGTH = 1400;
+    private static final int DATA_LENGTH = 1311;
 
-    private DemoVPNService service;
+    private TracingVPNService service;
     private TCPConnection tcpConnection;
     private TCPPacket tcpPacket;
     private InputStream inFromServer;
@@ -87,7 +87,7 @@ public class TCPReceiver implements Runnable{
         return (TCPPacketIpv4)tcpPacketBuilder.createTCPPacket();
     }
 
-    public void setService(DemoVPNService service) {
+    public void setService(TracingVPNService service) {
         this.service = service;
     }
     public void setTcpConnection(TCPConnection tcpConnection) {
