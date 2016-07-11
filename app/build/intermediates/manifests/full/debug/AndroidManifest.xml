@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.hackeris.project.MainActivity"
-            android:label="@string/title_activity_demo_main" >
+            android:label="@string/title_activity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name="com.example.hackeris.project.DemoVPNService"
+            android:name="com.example.hackeris.project.TracingVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE" >
             <intent-filter>
                 <action android:name="android.net.VpnService" />

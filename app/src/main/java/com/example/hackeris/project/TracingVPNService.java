@@ -37,7 +37,6 @@ import java.util.HashMap;
 import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
 import edu.huji.cs.netutils.build.TCPPacketBuilder;
-import edu.huji.cs.netutils.build.UDPPacketBuilder;
 import edu.huji.cs.netutils.parse.IPv4Address;
 import edu.huji.cs.netutils.parse.TCPPacketIpv4;
 import edu.huji.cs.netutils.parse.UDPPacketIpv4;
@@ -430,36 +429,14 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
         mOutputStream.write(Arrays.copyOfRange(tcpPacketToSend.getRawBytes(), 14, tcpPacketToSend.getRawBytes().length));
     }
 
-    public void sendUDPPacketToVPN(IPPacket ipPacket, byte[] data) throws IOException, NetUtilsException {
-        UDPPacketIpv4 udpPacketToSend = buildUDPPacket (ipPacket, data);
-        //Log.d (TAG, HexHelper.toString(udpPacketToSend.getRawBytes()));
-
-        ipPacket = new IPPacket(14, udpPacketToSend.getRawBytes());
+    public void sendUDPPacketToVPN(UDPPacketIpv4 udpPacketToSend) throws IOException, NetUtilsException {
+        //ipPacket = new IPPacket(14, udpPacketToSend.getRawBytes());
         //Log.d(TAG, "<-| UDP.data: " + HexHelper.toString(new UDPPacket(14, udpPacketToSend.getRawBytes()).getData()));
         //Log.d(TAG, "<-| ip packet: " + HexHelper.toString(ipPacket.getEthernetData()));
         System.out.println("00000000   " + HexHelper.toString(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length)));
 
         //Log.d(TAG, "// writing received udp packet back to vpn");
         mOutputStream.write(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length));
-    }
-
-    private UDPPacketIpv4 buildUDPPacket(IPPacket ipPacket, byte[] data) throws NetUtilsException {
-        UDPPacket udpPacket = new UDPPacket(0, ipPacket.getEthernetData());
-        UDPPacketBuilder udpPacketBuilder = new UDPPacketBuilder();
-        udpPacketBuilder.setSrcPort(udpPacket.getDestinationPort());
-        udpPacketBuilder.setDstPort(udpPacket.getSourcePort());
-        udpPacketBuilder.setPayload(trimTrailingZeros(data));
-
-        IPv4PacketBuilder ipv4 = new IPv4PacketBuilder();
-        ipv4.setSrcAddr(new IPv4Address(ipPacket.getDestinationAddress()));
-        ipv4.setDstAddr(new IPv4Address(ipPacket.getSourceAddress()));
-        ipv4.setId(ipPacket.getId() + 1);
-        ipv4.setTos(ipPacket.getTypeOfService());
-        ipv4.setFragFlags(2);
-        ipv4.setTTL(16);
-        ipv4.addL4Buider(udpPacketBuilder);
-
-        return (UDPPacketIpv4) udpPacketBuilder.createUDPPacket();
     }
 
     private DatagramPacket receiveDatagramPacket(DatagramSocket socket) throws IOException
@@ -495,17 +472,6 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
         InetSocketAddress address = new InetSocketAddress(tcpPacket.getDestinationAddress(),tcpPacket.getDestinationPort());
         socket.connect(address);
         return socket;
-    }
-
-    private byte[] trimTrailingZeros(byte[] bytes)
-    {
-        int i = bytes.length - 1;
-        while (i >= 0 && bytes[i] == 0)
-        {
-            --i;
-        }
-
-        return Arrays.copyOf(bytes, i + 1);
     }
 
     private void debugIncomingPacket(DatagramPacket datagramPacket)

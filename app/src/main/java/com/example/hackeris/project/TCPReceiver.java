@@ -52,7 +52,7 @@ public class TCPReceiver implements Runnable{
                 }
 
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -64,6 +64,8 @@ public class TCPReceiver implements Runnable{
 
     private TCPPacketIpv4 buildTCPPacket(TCPConnection tcpConnection, TCPPacket tcpPacket, byte[] bytes) throws NetUtilsException
     {
+        //long time = System.nanoTime();
+
         TCPPacketBuilder tcpPacketBuilder = new TCPPacketBuilder();
         tcpPacketBuilder.setACKFlag(true);
         tcpPacketBuilder.setFINFlag(false);
@@ -83,6 +85,8 @@ public class TCPReceiver implements Runnable{
         ipv4.setFragFlags(2);
         ipv4.setTTL(64);
         ipv4.addL4Buider(tcpPacketBuilder);
+
+        //Log.d (TAG, "building tcp packet takes: " + (System.nanoTime() - time) + "ns");
 
         return (TCPPacketIpv4)tcpPacketBuilder.createTCPPacket();
     }
