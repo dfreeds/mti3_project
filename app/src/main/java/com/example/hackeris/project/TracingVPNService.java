@@ -24,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -51,6 +50,8 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
     private ParcelFileDescriptor mInterface;
     private FileInputStream mInputStream;
     private FileOutputStream mOutputStream;
+
+    private HashMap<IPIdentifier, TCPConnection> tcpConnections = new HashMap<> ();
 
     private static final int PACK_SIZE = 32767 * 2;
 
@@ -130,7 +131,6 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
 
         // Allocate the buffer for a single packet.
         ByteBuffer packet = ByteBuffer.allocate(PACK_SIZE);
-        HashMap<TCPIdentifier, TCPConnection> tcpConnections = new HashMap<> ();
         //HashMap<Integer, TCPConnection> tcpConnections = new HashMap<> ();
         TCPConnection tcpConnection;
         byte[] bytes;
@@ -156,9 +156,9 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                     //TCP
                     TCPPacket tcpPacket = new TCPPacket(0, bytes);
                     Log.i(TAG, "->| " + tcpPacket.toColoredVerboseString(false));
+                    IPIdentifier ipIdentifier = new IPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort());
 
-                    tcpConnection = tcpConnections.get(new TCPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()));
-                    //tcpConnection = tcpConnections.get(tcpPacket.getSourcePort());
+                    tcpConnection = tcpConnections.get(ipIdentifier);
 
                     if (tcpConnection != null || tcpPacket.isSyn())
                     {
@@ -170,8 +170,7 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                         {
                             if (tcpConnection == null) {
                                 tcpConnection = new TCPConnection(createSocketConnection(tcpPacket));
-                                tcpConnections.put(new TCPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()), tcpConnection);
-                                //tcpConnections.put(tcpPacket.getSourcePort(), tcpConnection);
+                                tcpConnections.put(ipIdentifier, tcpConnection);
                                 tcpConnection.saveNextAckNumber(tcpPacket.getSequenceNumber(), 1);
                             }
 
@@ -203,13 +202,12 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                         else if (tcpPacket.isRst())
                         {
                             //just close connection outwards
-                            tcpConnection.getSocket().close();
-                            tcpConnections.remove(tcpPacket.getSourcePort());
+                            closeTCPConnection (tcpConnection, ipIdentifier);
                         }
                         else
                         {
                             if (tcpPacket.getData().length > 0) {
-                                //send ACK first!
+                                //send ACK
                                 try {
                                     sendTCPPacketToVPN(buildAckPacket(tcpPacket, tcpConnection));
                                 } catch (NetUtilsException e) {
@@ -222,8 +220,7 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                             else if (tcpConnection.isToClose ())
                             {
                                 //close connection outwards
-                                tcpConnection.getSocket().close();
-                                tcpConnections.remove(tcpPacket.getSourcePort());
+                                closeTCPConnection (tcpConnection, ipIdentifier);
                             }
 
                         }
@@ -242,6 +239,7 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                 {
                     //UDP
                     UDPPacket udpPacket = new UDPPacket(0, packet.array());
+                    Log.i(TAG, "->| " + udpPacket.toColoredString(false));
                     boolean doProcess = true;
 
                     if (udpPacket.getDestinationPort() == 53) {
@@ -269,11 +267,21 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
             }
 
             try {
-                Thread.sleep(100, 0);
+                Thread.sleep(0, 1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void closeTCPConnection(TCPConnection tcpConnection, IPIdentifier ipIdentifier) throws IOException {
+        if (tcpConnection.getTcpReceiver() != null) {
+            tcpConnection.getTcpReceiver().stop();
+        }
+        if (tcpConnection.getSocket() != null) {
+            tcpConnection.getSocket().close();
+        }
+        tcpConnections.remove(ipIdentifier);
     }
 
     private boolean isCleanDomainName(String domainName) {
@@ -399,7 +407,7 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
                 try {
                     sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection));
                 } catch (NetUtilsException e1) {
-                    e1.printStackTrace();
+                    closeTCPConnection(tcpConnection, new IPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()));
                 }
             }
         }
@@ -408,7 +416,7 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
             try {
                 sendTCPPacketToVPN(buildHandshakePacket(tcpPacket, false, tcpConnection));
             } catch (NetUtilsException e) {
-                e.printStackTrace();
+                closeTCPConnection(tcpConnection, new IPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()));
             }
         }
     }
@@ -437,33 +445,6 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
 
         //Log.d(TAG, "// writing received udp packet back to vpn");
         mOutputStream.write(Arrays.copyOfRange(udpPacketToSend.getRawBytes(), 14, udpPacketToSend.getRawBytes().length));
-    }
-
-    private DatagramPacket receiveDatagramPacket(DatagramSocket socket) throws IOException
-    {
-        byte[] answer = new byte[PACK_SIZE];
-        DatagramPacket datagramPacket = new DatagramPacket(answer, answer.length);
-        socket.receive(datagramPacket);
-        //debugIncomingPacket(datagramPacket);
-
-        return datagramPacket;
-    }
-
-    private DatagramSocket sendDatagramPacket(UDPPacket udpPacket) throws IOException
-    {
-        Log.d(TAG, "->| " + udpPacket.toColoredString(false));
-
-        DatagramSocket socket = new DatagramSocket();
-        protect(socket);
-        Log.d(TAG, "1...");
-        //Log.d(TAG, "|-> sending UDP data: " + HexHelper.toString(udpPacket.getData()));
-        DatagramPacket datagramPacket = new DatagramPacket(udpPacket.getData(), udpPacket.getLength (), InetAddress.getByName(udpPacket.getDestinationAddress()), udpPacket.getDestinationPort());
-        Log.d(TAG, "2...");
-        //Log.d (TAG, "|-> " + HexHelper.toString (datagramPacket.getData()));
-
-        socket.send(datagramPacket);
-        Log.d(TAG, "3...");
-        return socket;
     }
 
     private Socket createSocketConnection(TCPPacket tcpPacket) throws IOException {
@@ -527,6 +508,16 @@ public class TracingVPNService extends VpnService implements Handler.Callback, R
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+    }
+
+    public void removeTCPConnection(IPIdentifier ipIdentifier) {
+        //Log.d (TAG, "removeTCPConnection : " + ipIdentifier);
+        /*for (IPIdentifier ident : tcpConnections.keySet())
+        {
+            Log.d (TAG, "removeTCPConnection - " + ident);
+        }*/
+
+        tcpConnections.remove(ipIdentifier);
     }
 
     public class VPNServiceBinder extends Binder {

@@ -4,6 +4,8 @@
 
 package com.example.hackeris.project;
 
+import android.util.Log;
+
 import net.sourceforge.jpcap.net.TCPPacket;
 
 import java.io.IOException;
@@ -29,10 +31,12 @@ public class TCPReceiver implements Runnable{
     private TCPPacket tcpPacket;
     private InputStream inFromServer;
 
+    private boolean run = true;
+
     @Override
     public void run() {
         try {
-            while (true) {
+            while (run) {
                 byte[] buffer = new byte[DATA_LENGTH];
                 int bytesRead = 0;
 
@@ -52,13 +56,14 @@ public class TCPReceiver implements Runnable{
                 }
 
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(0, 1);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e (TAG, "Sleep interrupted", e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            service.removeTCPConnection (new IPIdentifier(tcpPacket.getSourcePort(), tcpPacket.getDestinationAddress(), tcpPacket.getDestinationPort()));
+            Log.d (TAG, "Couldn't read from TCP connection", e);
         }
     }
 
@@ -102,5 +107,10 @@ public class TCPReceiver implements Runnable{
     }
     public void setTcpPacket(TCPPacket tcpPacket) {
         this.tcpPacket = tcpPacket;
+    }
+
+    public void stop ()
+    {
+        run = false;
     }
 }
