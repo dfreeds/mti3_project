@@ -1,4 +1,4 @@
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import android.util.Log;
 

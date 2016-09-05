@@ -2,7 +2,7 @@
  * Developed by David Fritz 2016.
  */
 
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 /**
  * Created by dfritz on 08/07/16.

@@ -2,7 +2,7 @@
  * Developed by David Fritz 2016.
  */
 
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import at.fhtw.mti.project.project.R;
 
 import java.util.List;
 

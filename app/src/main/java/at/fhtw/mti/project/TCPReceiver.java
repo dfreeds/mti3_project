@@ -2,7 +2,7 @@
  * Developed by David Fritz 2016.
  */
 
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import android.util.Log;
 

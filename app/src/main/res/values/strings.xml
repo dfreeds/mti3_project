@@ -7,5 +7,5 @@
     <string name="connecting">TracingVPN is connecting…</string>
     <string name="connected">TracingVPN is connected!</string>
     <string name="disconnected">TracingVPN is disconnected!</string>
-    <string name="title_activity">CommunicationControl</string>
+    <string name="title_activity">Communication Control</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hackeris.project">
+    package="at.fhtw.mti.project.project">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.example.hackeris.project.MainActivity"
+            android:name="at.fhtw.mti.project.MainActivity"
             android:label="@string/title_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
         </activity>
 
         <service
-            android:name=".TracingVPNService"
+            android:name="at.fhtw.mti.project.TracingVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
                 <action android:name="android.net.VpnService" />

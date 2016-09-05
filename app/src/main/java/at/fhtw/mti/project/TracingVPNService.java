@@ -2,7 +2,7 @@
  * Developed by David Fritz 2015.
  */
 
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import android.content.Intent;
 import android.net.VpnService;
@@ -33,6 +33,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import at.fhtw.mti.project.project.R;
 import edu.huji.cs.netutils.NetUtilsException;
 import edu.huji.cs.netutils.build.IPv4PacketBuilder;
 import edu.huji.cs.netutils.build.TCPPacketBuilder;

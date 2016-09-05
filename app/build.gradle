@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.example.hackeris.toyvpn"
+        applicationId "at.fhtw.mti.project.toyvpn"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'jpcap:jpcap:0.1.18-002'
 }

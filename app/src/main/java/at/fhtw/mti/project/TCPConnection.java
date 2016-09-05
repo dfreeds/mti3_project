@@ -2,7 +2,7 @@
  * Developed by David Fritz 2015.
  */
 
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import java.net.Socket;
 

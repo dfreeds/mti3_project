@@ -1,4 +1,4 @@
-package com.example.hackeris.project;
+package at.fhtw.mti.project;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+
+import at.fhtw.mti.project.project.R;
 
 import java.util.ArrayList;
 
